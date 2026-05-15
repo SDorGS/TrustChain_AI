@@ -1,0 +1,824 @@
+===== DIRECTORY STRUCTURE =====
+
+[app]
+    combined_backend_code.txt
+    database.py
+    main.py
+    models.py
+    __init__.py
+    [api]
+        payments.py
+        verify.py
+        __init__.py
+    [core]
+        config.py
+        nafdac_list.py
+        scoring.py
+        __init__.py
+    [services]
+        ocr.py
+        __init__.py
+
+
+===== FILE CONTENTS =====
+
+
+================================================================================
+FILE: combined_backend_code.txt
+================================================================================
+
+
+
+
+================================================================================
+FILE: database.py
+================================================================================
+
+from sqlalchemy import create_engine
+from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.orm import sessionmaker
+
+from app.core.config import settings
+
+if settings.DATABASE_URL.startswith("sqlite"):
+    engine = create_engine(
+        settings.DATABASE_URL,
+        connect_args={"check_same_thread": False},
+    )
+else:
+    engine = create_engine(settings.DATABASE_URL)
+
+SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+Base = declarative_base()
+
+
+def get_db():
+    db = SessionLocal()
+    try:
+        yield db
+    finally:
+        db.close()
+
+
+================================================================================
+FILE: main.py
+================================================================================
+
+import time
+
+from fastapi import FastAPI, Request
+from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import JSONResponse
+
+from app.api import payments, verify
+from app.core.config import settings
+from app.database import Base, engine
+
+Base.metadata.create_all(bind=engine)
+
+app = FastAPI(
+    title=settings.PROJECT_NAME,
+    description="Product & Vendor Verification Engine",
+    version=settings.VERSION,
+)
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+
+@app.middleware("http")
+async def add_process_time_header(request: Request, call_next):
+    start_time = time.time()
+    response = await call_next(request)
+    response.headers["X-Process-Time"] = str(time.time() - start_time)
+    return response
+
+
+@app.exception_handler(Exception)
+async def global_exception_handler(request: Request, exc: Exception):
+    return JSONResponse(
+        status_code=500,
+        content={
+            "error": "Internal Server Error",
+            "message": str(exc),
+            "path": request.url.path,
+        },
+    )
+
+
+app.include_router(verify.router, prefix="/api/v1/verify", tags=["Verification"])
+app.include_router(payments.router, prefix="/api/v1/payments", tags=["Payments"])
+
+
+@app.get("/", tags=["System"])
+async def health_check():
+    return {
+        "project": "TrustChain AI",
+        "status": "Operational",
+        "squad_gateway": "Active" if settings.SQUAD_SECRET_KEY else "Key Missing",
+        "timestamp": time.time(),
+    }
+
+
+if __name__ == "__main__":
+    import uvicorn
+
+    uvicorn.run("app.main:app", host="0.0.0.0", port=8000, reload=True)
+
+
+================================================================================
+FILE: models.py
+================================================================================
+
+from datetime import datetime
+
+from sqlalchemy import Boolean, Column, DateTime, Float, Integer, JSON, String
+
+from app.database import Base
+
+
+class Verification(Base):
+    __tablename__ = "verifications"
+
+    id = Column(Integer, primary_key=True, index=True)
+    timestamp = Column(DateTime, default=datetime.utcnow, nullable=False)
+
+    product_name = Column(String, index=True, nullable=False)
+    batch_no = Column(String, nullable=True)
+    nafdac_no = Column(String, nullable=True)
+    price = Column(Float, nullable=False)
+
+    vendor_name = Column(String, index=True, nullable=True)
+
+    ocr_text = Column(String, nullable=True)
+
+    score = Column(Integer, nullable=False)
+    level = Column(String, nullable=False)
+    flags = Column(JSON, default=list)
+    verdict = Column(String, nullable=False)
+
+    paid = Column(Boolean, default=False, nullable=False)
+    squad_transaction_ref = Column(String, nullable=True, index=True)
+
+
+================================================================================
+FILE: __init__.py
+================================================================================
+
+# TrustChain AI — App Package
+# Router registration is handled in app/main.py
+# Do NOT put app.include_router() calls here — `app` doesn't exist at this scope
+
+
+
+================================================================================
+FILE: api\payments.py
+================================================================================
+
+from typing import Any, Dict, Optional
+
+import httpx
+from fastapi import APIRouter, Depends, HTTPException, Request
+from pydantic import BaseModel
+from sqlalchemy.orm import Session
+
+from app.core.config import settings
+from app.database import get_db
+from app.models import Verification
+
+router = APIRouter()
+
+
+class PaymentRequest(BaseModel):
+    email: str
+    amount: int
+    verification_id: int
+
+
+@router.post("/initiate")
+async def initiate_payment(req: PaymentRequest):
+    if not settings.SQUAD_SECRET_KEY:
+        raise HTTPException(status_code=500, detail="Squad API key missing")
+
+    headers = {
+        "Authorization": f"Bearer {settings.SQUAD_SECRET_KEY}",
+        "Content-Type": "application/json",
+    }
+
+    payload = {
+        "amount": req.amount,
+        "email": req.email,
+        "currency": "NGN",
+        "initiate_type": "inline",
+        "metadata": {
+            "verification_id": req.verification_id
+        },
+    }
+
+    async with httpx.AsyncClient(timeout=30) as client:
+        response = await client.post(
+            f"{settings.SQUAD_BASE_URL}/transaction/initiate",
+            json=payload,
+            headers=headers,
+        )
+
+    if response.status_code not in (200, 201):
+        raise HTTPException(status_code=response.status_code, detail=response.text)
+
+    return response.json()
+
+
+@router.post("/webhook")
+async def squad_webhook(request: Request, db: Session = Depends(get_db)):
+    payload: Dict[str, Any] = await request.json()
+
+    event = payload.get("Event") or payload.get("event")
+    body = payload.get("Body") or payload.get("body") or payload.get("data") or {}
+    meta = body.get("meta") or body.get("metadata") or {}
+
+    verification_id: Optional[int] = None
+    raw_verification_id = meta.get("verification_id")
+
+    if raw_verification_id is not None:
+        try:
+            verification_id = int(raw_verification_id)
+        except Exception:
+            verification_id = None
+
+    transaction_status = (
+        body.get("transaction_status")
+        or body.get("status")
+        or payload.get("status")
+    )
+
+    transaction_ref = (
+        body.get("transaction_ref")
+        or body.get("reference")
+        or body.get("transaction_reference")
+        or payload.get("reference")
+    )
+
+    if event == "charge_successful" or str(transaction_status).lower() in {"success", "successful", "paid"}:
+        if verification_id:
+            verification = db.query(Verification).get(verification_id)
+            if verification:
+                verification.paid = True
+                if transaction_ref:
+                    verification.squad_transaction_ref = str(transaction_ref)
+                db.commit()
+
+    return {"received": True}
+
+
+================================================================================
+FILE: api\verify.py
+================================================================================
+
+from __future__ import annotations
+
+import os
+import tempfile
+
+from fastapi import APIRouter, Depends, File, Form, HTTPException, UploadFile
+from sqlalchemy.orm import Session
+
+from app.core.config import settings
+from app.core.scoring import calculate_trust_score
+from app.database import get_db
+from app.models import Verification
+from app.services.ocr import extract_label_text
+
+router = APIRouter()
+
+
+@router.post("/run")
+async def run_verification(
+    product_name: str = Form(...),
+    batch_no: str = Form(""),
+    nafdac_no: str = Form(""),
+    price: float = Form(...),
+    vendor_name: str = Form(""),
+    image: UploadFile = File(...),
+    db: Session = Depends(get_db),
+):
+    if image.content_type not in settings.ALLOWED_CONTENT_TYPES:
+        raise HTTPException(status_code=400, detail="Only JPG and PNG images are allowed.")
+
+    contents = await image.read()
+
+    if len(contents) > settings.MAX_UPLOAD_SIZE:
+        raise HTTPException(status_code=400, detail="Image file is too large. Maximum size is 5MB.")
+
+    suffix = os.path.splitext(image.filename or "")[1] or ".png"
+    temp_path = None
+
+    try:
+        with tempfile.NamedTemporaryFile(delete=False, suffix=suffix) as temp_file:
+            temp_file.write(contents)
+            temp_path = temp_file.name
+
+        ocr_text = extract_label_text(temp_path)
+
+        product_data = {
+            "product_name": product_name,
+            "batch_no": batch_no,
+            "nafdac_no": nafdac_no,
+            "price": price,
+            "market_avg": settings.MARKET_AVG,
+            "ocr_text": ocr_text,
+            "expiry_status": "active",
+        }
+
+        vendor_data = {
+            "vendor_name": vendor_name,
+            "years_in_business": 2,
+            "complaint_count": 0,
+            "is_cac_registered": True,
+        }
+
+        analysis = calculate_trust_score(product_data, vendor_data)
+
+        if settings.FEE_MODE == "product_price":
+            verification_fee = int(price * 100)
+        else:
+            verification_fee = int(settings.VERIFICATION_FEE * 100)
+
+        verification = Verification(
+            product_name=product_name,
+            batch_no=batch_no,
+            nafdac_no=nafdac_no,
+            price=price,
+            vendor_name=vendor_name,
+            ocr_text=ocr_text,
+            score=analysis.score,
+            level=analysis.level,
+            flags=analysis.flags,
+            verdict=analysis.verdict,
+            paid=False,
+        )
+
+        db.add(verification)
+        db.commit()
+        db.refresh(verification)
+
+        return {
+            "id": f"TRC-{verification.id}",
+            "verification_id": verification.id,
+            "payment_required": True,
+            "verification_fee": verification_fee,
+            "product": {
+                "name": product_name,
+                "batch_no": batch_no,
+                "nafdac_no": nafdac_no,
+                "price": price,
+                "ocr_text": ocr_text,
+            },
+            "vendor": {
+                "name": vendor_name,
+            },
+            "analysis": analysis.model_dump(),
+        }
+
+    finally:
+        if temp_path and os.path.exists(temp_path):
+            try:
+                os.remove(temp_path)
+            except OSError:
+                pass
+
+
+================================================================================
+FILE: api\__init__.py
+================================================================================
+
+from .payments import router as payments_router
+from .verify import router as verify_router
+
+__all__ = ["payments_router", "verify_router"]
+
+
+================================================================================
+FILE: core\config.py
+================================================================================
+
+from typing import List, Optional
+
+from pydantic_settings import BaseSettings
+
+
+class Settings(BaseSettings):
+    PROJECT_NAME: str = "TrustChain AI"
+    VERSION: str = "1.0.0"
+    APP_ENV: str = "development"
+
+    DATABASE_URL: str = "sqlite:///./trustchain.db"
+
+    SQUAD_SECRET_KEY: Optional[str] = None
+    SQUAD_WEBHOOK_SECRET: Optional[str] = None
+    SQUAD_BASE_URL: str = "https://sandbox-api-d.squadco.com"
+
+    MAX_UPLOAD_SIZE: int = 5 * 1024 * 1024
+    ALLOWED_CONTENT_TYPES: List[str] = ["image/jpeg", "image/png"]
+
+    VERIFICATION_FEE: int = 1000
+    FEE_MODE: str = "fixed"  # fixed | product_price
+
+    MARKET_AVG: int = 5000
+    PRICE_THRESHOLD: float = 0.6
+
+    class Config:
+        env_file = ".env"
+        case_sensitive = True
+
+
+settings = Settings()
+
+
+================================================================================
+FILE: core\nafdac_list.py
+================================================================================
+
+import json
+from pathlib import Path
+
+NAFDAC_FILE = Path(__file__).resolve().parents[2] / "nafdac_products.json"
+
+VALID_NAFDAC = set()
+
+if NAFDAC_FILE.exists():
+    try:
+        with NAFDAC_FILE.open("r", encoding="utf-8") as f:
+            data = json.load(f)
+
+        if isinstance(data, list):
+            for item in data:
+                if isinstance(item, dict):
+                    code = str(item.get("nafdac_no", "")).strip().upper()
+                    if code:
+                        VALID_NAFDAC.add(code)
+                elif isinstance(item, str):
+                    code = item.strip().upper()
+                    if code:
+                        VALID_NAFDAC.add(code)
+    except Exception:
+        VALID_NAFDAC = set()
+
+
+================================================================================
+FILE: core\scoring.py
+================================================================================
+
+import json
+import re
+from dataclasses import dataclass
+from pathlib import Path
+from typing import Dict, List, Optional
+
+from app.core.config import settings
+
+
+# =========================================================
+# LOAD NAFDAC DATABASE
+# =========================================================
+
+# safer relative-path approach
+NAFDAC_FILE_PATH = (
+    Path(__file__).resolve().parents[2] / "nafdac_products.json"
+)
+
+
+def load_nafdac_db() -> set:
+    """
+    Loads approved NAFDAC numbers from JSON database.
+
+    Supported formats:
+    1. ["A4-1001", "B2-2020"]
+    2. [{"nafdac_no": "A4-1001"}]
+    3. {"A4-1001": {...}}
+    """
+
+    try:
+        if not NAFDAC_FILE_PATH.exists():
+            print("[NAFDAC] Database file not found.")
+            return set()
+
+        with open(NAFDAC_FILE_PATH, "r", encoding="utf-8") as f:
+            data = json.load(f)
+
+        results = set()
+
+        # -------------------------------------------------
+        # FORMAT 1: LIST
+        # -------------------------------------------------
+        if isinstance(data, list):
+
+            for item in data:
+
+                # list[str]
+                if isinstance(item, str):
+                    code = item.strip().upper()
+
+                    if code:
+                        results.add(code)
+
+                # list[dict]
+                elif isinstance(item, dict):
+                    code = str(
+                        item.get("nafdac_no", "")
+                    ).strip().upper()
+
+                    if code:
+                        results.add(code)
+
+        # -------------------------------------------------
+        # FORMAT 2: DICT
+        # -------------------------------------------------
+        elif isinstance(data, dict):
+
+            for key in data.keys():
+                code = str(key).strip().upper()
+
+                if code:
+                    results.add(code)
+
+        print(f"[NAFDAC] Loaded {len(results)} records.")
+
+        return results
+
+    except Exception as e:
+        print(f"[NAFDAC LOAD ERROR] {e}")
+        return set()
+
+
+VALID_NAFDAC = load_nafdac_db()
+
+
+# =========================================================
+# DATA MODELS
+# =========================================================
+
+@dataclass
+class ProductInput:
+    name: str
+    price: float
+    nafdac_no: Optional[str] = None
+    ocr_text: Optional[str] = None
+    market_avg: Optional[float] = None
+    expiry_status: Optional[str] = None
+
+
+@dataclass
+class VendorInfo:
+    years_in_business: int = 0
+    complaint_count: int = 0
+    is_cac_registered: bool = False
+
+
+@dataclass
+class TrustResult:
+    score: float
+    level: str
+    verdict: str
+    flags: List[str]
+
+
+# =========================================================
+# HELPERS
+# =========================================================
+
+def normalize(text: str) -> str:
+    return str(text).lower().strip()
+
+
+def is_valid_nafdac(nafdac_no: Optional[str]) -> bool:
+    """
+    NAFDAC validation strategy:
+    1. Database lookup
+    2. Regex fallback
+    """
+
+    if not nafdac_no:
+        return False
+
+    normalized = str(nafdac_no).strip().upper()
+
+    # -----------------------------------------------------
+    # STRONGEST VALIDATION:
+    # DATABASE MATCH
+    # -----------------------------------------------------
+    if normalized in VALID_NAFDAC:
+        return True
+
+    # -----------------------------------------------------
+    # FALLBACK STRUCTURE VALIDATION
+    # -----------------------------------------------------
+    pattern = re.compile(r"^[A-Z0-9]{2,}[-/][A-Z0-9]+$")
+
+    return bool(pattern.match(normalized))
+
+
+# =========================================================
+# CORE TRUST ENGINE
+# =========================================================
+
+def calculate_trust_score(
+    product: Dict,
+    vendor: Dict
+) -> TrustResult:
+
+    score = 100.0
+    flags: List[str] = []
+
+    # =====================================================
+    # NORMALIZE INPUTS
+    # =====================================================
+
+    product_obj = ProductInput(
+        name=str(product.get("product_name", "")),
+        price=float(product.get("price", 0)),
+        nafdac_no=product.get("nafdac_no"),
+        ocr_text=product.get("ocr_text"),
+        market_avg=product.get("market_avg"),
+        expiry_status=product.get("expiry_status"),
+    )
+
+    vendor_obj = VendorInfo(
+        years_in_business=int(
+            vendor.get("years_in_business", 0)
+        ),
+        complaint_count=int(
+            vendor.get("complaint_count", 0)
+        ),
+        is_cac_registered=bool(
+            vendor.get("is_cac_registered", False)
+        ),
+    )
+
+    # =====================================================
+    # 1. NAFDAC VALIDATION
+    # =====================================================
+
+    if not is_valid_nafdac(product_obj.nafdac_no):
+        score -= 35
+        flags.append(
+            "Invalid or unverified NAFDAC registration"
+        )
+
+    # =====================================================
+    # 2. PRICE ANOMALY DETECTION
+    # =====================================================
+
+    market_avg = (
+        product_obj.market_avg
+        or getattr(settings, "MARKET_AVG", 0)
+    )
+
+    if market_avg > 0:
+
+        # suspiciously cheap
+        if product_obj.price < market_avg * 0.6:
+            score -= 20
+            flags.append(
+                "Price significantly below market average"
+            )
+
+        # suspiciously expensive
+        elif product_obj.price > market_avg * 1.8:
+            score -= 10
+            flags.append(
+                "Price unusually high"
+            )
+
+    # =====================================================
+    # 3. EXPIRY ANALYSIS
+    # =====================================================
+
+    if product_obj.expiry_status == "expired":
+        score -= 40
+        flags.append("Product is expired")
+
+    # =====================================================
+    # 4. VENDOR TRUST ANALYSIS
+    # =====================================================
+
+    if vendor_obj.years_in_business < 1:
+        score -= 15
+        flags.append(
+            "Vendor has less than 1 year of history"
+        )
+
+    if vendor_obj.complaint_count > 2:
+        score -= 25
+        flags.append(
+            "Multiple unresolved complaints"
+        )
+
+    if not vendor_obj.is_cac_registered:
+        score -= 20
+        flags.append(
+            "Vendor not CAC registered"
+        )
+
+    # =====================================================
+    # 5. OCR LABEL INTEGRITY
+    # =====================================================
+
+    if product_obj.ocr_text:
+
+        product_name_normalized = normalize(
+            product_obj.name
+        )
+
+        ocr_normalized = normalize(
+            product_obj.ocr_text
+        )
+
+        if product_name_normalized not in ocr_normalized:
+            score -= 10
+            flags.append(
+                "Product label mismatch detected (OCR)"
+            )
+
+    # =====================================================
+    # FINAL SCORE NORMALIZATION
+    # =====================================================
+
+    score = max(0, min(100, score))
+
+    # =====================================================
+    # RISK CLASSIFICATION
+    # =====================================================
+
+    if score >= 80:
+        level = "LOW"
+        verdict = "Likely Genuine"
+
+    elif score >= 60:
+        level = "MEDIUM"
+        verdict = "Proceed with Caution"
+
+    else:
+        level = "HIGH"
+        verdict = "High Risk / Possible Fraud"
+
+    # =====================================================
+    # RETURN RESULT
+    # =====================================================
+
+    return TrustResult(
+        score=round(score, 2),
+        level=level,
+        verdict=verdict,
+        flags=flags,
+    )
+
+
+================================================================================
+FILE: core\__init__.py
+================================================================================
+
+from .config import settings
+from .scoring import calculate_trust_score
+
+__all__ = ["settings", "calculate_trust_score"]
+
+
+================================================================================
+FILE: services\ocr.py
+================================================================================
+
+import pytesseract
+from PIL import Image, ImageFilter, ImageOps
+
+
+def extract_label_text(image_path: str) -> str:
+    """
+    Perform OCR on the given image with simple preprocessing.
+    Returns uppercase text.
+    """
+    try:
+        img = Image.open(image_path)
+        img = ImageOps.exif_transpose(img)
+        img = img.convert("L")
+        img = img.filter(ImageFilter.SHARPEN)
+
+        text = pytesseract.image_to_string(img, config="--psm 6")
+        return text.upper().strip()
+    except Exception as e:
+        print(f"OCR error: {e}")
+        return ""
+
+
+================================================================================
+FILE: services\__init__.py
+================================================================================
+
+from .ocr import extract_label_text
+
+__all__ = ["extract_label_text"]
+

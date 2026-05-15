@@ -1,0 +1,4993 @@
+====================================================================================================
+COMBINED PROJECT EXPORT
+====================================================================================================
+
+# DIRECTORY STRUCTURES
+
+
+====================================================================================================
+ROOT DIRECTORY:
+C:\Users\HP\Downloads\the-full-app-trust-ai-main (1)\the-full-app-trust-ai-main\trustchain-ai\src
+====================================================================================================
+
+[src]
+    App.tsx
+    index.css
+    main.tsx
+    [api]
+        client.ts
+    [components]
+        [layout]
+            Footer.tsx
+            Navbar.tsx
+    [views]
+        Dashboard.tsx
+        Landing.tsx
+        Result.tsx
+        Verify.tsx
+
+====================================================================================================
+ROOT DIRECTORY:
+C:\Users\HP\Downloads\the-full-app-trust-ai-main (1)\the-full-app-trust-ai-main\trustchain backend\trustchain-backend\app
+====================================================================================================
+
+[app]
+    combined_backend_code.txt
+    combined_full_project.txt
+    database.py
+    main.py
+    models.py
+    __init__.py
+    [api]
+        payments.py
+        verify.py
+        __init__.py
+    [core]
+        config.py
+        nafdac_list.py
+        scoring.py
+        __init__.py
+    [services]
+        ocr.py
+        __init__.py
+
+
+====================================================================================================
+FILE CONTENTS
+====================================================================================================
+
+
+====================================================================================================
+SOURCE ROOT:
+C:\Users\HP\Downloads\the-full-app-trust-ai-main (1)\the-full-app-trust-ai-main\trustchain-ai\src
+====================================================================================================
+
+
+####################################################################################################
+FILE: App.tsx
+####################################################################################################
+
+/**
+ * @license
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
+import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
+import { AnimatePresence, motion } from 'motion/react';
+import Navbar from './components/layout/Navbar';
+import Footer from './components/layout/Footer';
+import Landing from './views/Landing';
+import Verify from './views/Verify';
+import Result from './views/Result';
+import Dashboard from './views/Dashboard';
+
+function AppContent() {
+  const location = useLocation();
+  const isDashboard = location.pathname.startsWith('/dashboard');
+
+  return (
+    <div className="min-h-screen flex flex-col font-sans selection:bg-secondary/20 selection:text-secondary">
+      {!isDashboard && <Navbar />}
+      <main className="flex-grow">
+        <AnimatePresence mode="wait">
+          <Routes location={location}>
+            <Route 
+              path="/" 
+              element={
+                <motion.div
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 0.3 }}
+                >
+                  <Landing />
+                </motion.div>
+              } 
+            />
+            <Route 
+              path="/verify" 
+              element={
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.98 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0, scale: 1.02 }}
+                  transition={{ duration: 0.3 }}
+                >
+                  <Verify />
+                </motion.div>
+              } 
+            />
+            <Route 
+              path="/result" 
+              element={
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -20 }}
+                  transition={{ duration: 0.3 }}
+                >
+                   <Result />
+                </motion.div>
+              } 
+            />
+            <Route 
+              path="/dashboard" 
+              element={
+                <motion.div
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 0.3 }}
+                >
+                   <Dashboard />
+                </motion.div>
+              } 
+            />
+          </Routes>
+        </AnimatePresence>
+      </main>
+      {!isDashboard && <Footer />}
+    </div>
+  );
+}
+
+export default function App() {
+  return (
+    <Router>
+      <AppContent />
+    </Router>
+  );
+}
+
+
+
+
+####################################################################################################
+FILE: index.css
+####################################################################################################
+
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Plus Jakarta Sans", ui-sans-serif, system-ui, sans-serif;
+
+  --color-surface: #f8f9ff;
+  --color-surface-dim: #cbdbf5;
+  --color-surface-bright: #f8f9ff;
+  --color-surface-container-lowest: #ffffff;
+  --color-surface-container-low: #eff4ff;
+  --color-surface-container: #e5eeff;
+  --color-surface-container-high: #dce9ff;
+  --color-surface-container-highest: #d3e4fe;
+
+  --color-on-surface: #0b1c30;
+  --color-on-surface-variant: #45464d;
+
+  --color-primary: #000000;
+  --color-on-primary: #ffffff;
+  --color-primary-container: #131b2e;
+  --color-on-primary-container: #7c839b;
+
+  --color-secondary: #0051d5;
+  --color-on-secondary: #ffffff;
+  --color-secondary-container: #316bf3;
+  --color-on-secondary-container: #fefcff;
+
+  --color-tertiary: #000000;
+  --color-on-tertiary: #ffffff;
+  --color-tertiary-container: #00201d;
+  --color-on-tertiary-container: #0d9488;
+
+  --color-error: #ba1a1a;
+  --color-on-error: #ffffff;
+  --color-error-container: #ffdad6;
+  --color-on-error-container: #93000a;
+
+  --color-outline: #76777d;
+  --color-outline-variant: #c6c6cd;
+
+  --color-inverse-surface: #213145;
+  --color-inverse-on-surface: #eaf1ff;
+  --color-surface-tint: #565e74;
+
+  --color-primary-fixed: #dae2fd;
+  --color-primary-fixed-dim: #bec6e0;
+  --color-on-primary-fixed: #131b2e;
+
+  --color-secondary-fixed: #dbe1ff;
+  --color-secondary-fixed-dim: #b4c5ff;
+  --color-on-secondary-fixed: #00174b;
+
+  --color-tertiary-fixed: #89f5e7;
+  --color-tertiary-fixed-dim: #6bd8cb;
+  --color-on-tertiary-fixed: #00201d;
+
+  --radius-xs: 0.25rem;
+  --radius-sm: 0.5rem;
+  --radius-md: 0.75rem;
+  --radius-lg: 1rem;
+  --radius-xl: 1.5rem;
+  --radius-2xl: 2rem;
+}
+
+@layer base {
+  body {
+    @apply bg-surface text-on-surface font-sans;
+  }
+}
+
+.glass-panel {
+  @apply bg-white/70 backdrop-blur-xl border border-outline-variant/30;
+}
+
+
+####################################################################################################
+FILE: main.tsx
+####################################################################################################
+
+import { StrictMode } from "react";
+import { createRoot } from "react-dom/client";
+import App from "./App.tsx";
+import "./index.css";
+
+createRoot(document.getElementById("root")!).render(
+  <StrictMode>
+    <App />
+  </StrictMode>
+);
+
+
+####################################################################################################
+FILE: api\client.ts
+####################################################################################################
+
+const API_BASE_URL =
+  import.meta.env.VITE_API_BASE_URL || "http://localhost:8000/api/v1";
+
+async function request(path: string, options: RequestInit) {
+  const res = await fetch(`${API_BASE_URL}${path}`, options);
+
+  if (!res.ok) {
+    const error = await res.json().catch(() => ({
+      detail: `HTTP ${res.status}`,
+    }));
+    throw new Error(error.detail ?? `Request failed with status ${res.status}`);
+  }
+
+  return res.json();
+}
+
+export const api = {
+  post: (path: string, body: FormData | Record<string, unknown>, options?: RequestInit) => {
+    const isFormData = body instanceof FormData;
+
+    return request(path, {
+      method: "POST",
+      headers: isFormData ? undefined : { "Content-Type": "application/json" },
+      body: isFormData ? body : JSON.stringify(body),
+      ...options,
+    });
+  },
+  get: (path: string) => request(path, { method: "GET" }),
+};
+
+export const runVerification = async (formData: FormData) => {
+  return api.post("/verify/run", formData);
+};
+
+
+####################################################################################################
+FILE: components\layout\Footer.tsx
+####################################################################################################
+
+export default function Footer() {
+  return (
+    <footer className="bg-surface-container-low border-t border-on-surface/10 w-full py-8">
+      <div className="max-w-[1440px] mx-auto px-4 md:px-12 flex flex-col md:flex-row justify-between items-center gap-8">
+        <div>
+          <span className="text-xl font-bold text-on-surface block mb-2">TrustChain AI</span>
+          <p className="text-sm text-on-surface-variant max-w-sm">
+            © 2024 TrustChain AI. Digital Integrity for the African Ecosystem.
+          </p>
+        </div>
+        
+        <div className="flex flex-wrap justify-center gap-8 text-sm font-medium text-on-surface-variant">
+          <a href="#" className="hover:text-secondary transition-colors">Privacy Policy</a>
+          <a href="#" className="hover:text-secondary transition-colors">Terms of Service</a>
+          <a href="#" className="hover:text-secondary transition-colors">Security Audit</a>
+          <a href="#" className="hover:text-secondary transition-colors">Contact Support</a>
+        </div>
+      </div>
+    </footer>
+  );
+}
+
+
+
+####################################################################################################
+FILE: components\layout\Navbar.tsx
+####################################################################################################
+
+import { Bell, HelpCircle, Menu } from 'lucide-react';
+import { Link, useLocation } from 'react-router-dom';
+import { motion } from 'motion/react';
+import { clsx, type ClassValue } from 'clsx';
+import { twMerge } from 'tailwind-merge';
+
+function cn(...inputs: ClassValue[]) {
+  return twMerge(clsx(inputs));
+}
+
+export default function Navbar() {
+  const location = useLocation();
+  
+  const navLinks = [
+    { name: 'Dashboard', href: '/dashboard' },
+    { name: 'Verify Product', href: '/verify' },
+    { name: 'Verify Vendor', href: '/verify' }, // Simplification for demo
+    { name: 'History', href: '#' },
+  ];
+
+  return (
+    <nav className="bg-surface/70 backdrop-blur-xl border-b border-on-surface/10 sticky top-0 z-50 flex justify-between items-center w-full px-4 md:px-12 py-4">
+      <div className="flex items-center gap-8 md:gap-12">
+        <Link to="/" className="font-bold text-xl md:text-2xl text-on-surface tracking-tight outline-none">
+          TrustChain AI
+        </Link>
+        <div className="hidden md:flex gap-8">
+          {navLinks.map((link) => (
+            <Link
+              key={link.name}
+              to={link.href}
+              className={cn(
+                "text-sm font-semibold transition-colors hover:text-secondary",
+                location.pathname === link.href ? "text-secondary border-b-2 border-secondary pb-1" : "text-on-surface-variant"
+              )}
+            >
+              {link.name}
+            </Link>
+          ))}
+        </div>
+      </div>
+      
+      <div className="flex items-center gap-4">
+        <button className="p-2 text-on-surface-variant hover:text-secondary transition-colors transition-transform active:scale-95">
+          <Bell size={20} />
+        </button>
+        <button className="p-2 text-on-surface-variant hover:text-secondary transition-colors transition-transform active:scale-95">
+          <HelpCircle size={20} />
+        </button>
+        <Link to="/verify" className="hidden sm:block outline-none">
+          <motion.button 
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
+            className="bg-secondary text-on-secondary px-6 py-2 rounded-lg text-sm font-semibold transition-shadow hover:shadow-lg hover:shadow-secondary/20"
+          >
+            Verify Now
+          </motion.button>
+        </Link>
+        <div className="md:hidden">
+            <Menu size={24} className="text-on-surface" />
+        </div>
+      </div>
+    </nav>
+  );
+}
+
+
+
+####################################################################################################
+FILE: views\Dashboard.tsx
+####################################################################################################
+
+import { LayoutDashboard, BarChart3, FileText, Settings, HelpCircle, LogOut, Search, Bell, ShieldCheck, Zap, TrendingUp, AlertTriangle, CreditCard, Store, MoreHorizontal, Smartphone, Laptop, Headphones, Package, ArrowRight } from 'lucide-react';
+import { motion } from 'motion/react';
+import { Link } from 'react-router-dom';
+
+export default function Dashboard() {
+  const stats = [
+    { label: 'Total Verified', value: '42,891', change: '+12.5%', icon: <ShieldCheck />, color: 'text-secondary bg-secondary/10' },
+    { label: 'High Risk Flagged', value: '154', change: '+2.1%', icon: <AlertTriangle />, color: 'text-error bg-error/10', border: 'border-r-4 border-error' },
+    { label: 'Successful Payments', value: '₦12.4M', change: '+8.4%', icon: <CreditCard />, color: 'text-on-tertiary-container bg-on-tertiary-container/10' },
+    { label: 'Active Vendors', value: '1,208', change: '+15', icon: <Store />, color: 'text-on-primary-container bg-on-primary-container/10' },
+  ];
+
+  const recentVerifications = [
+    { date: 'Oct 24, 14:20', item: 'MacBook Pro M3', icon: <Laptop />, score: '98%', status: 'success' },
+    { date: 'Oct 24, 13:45', item: 'iPhone 15 Pro', icon: <Smartphone />, score: '12%', status: 'error' },
+    { date: 'Oct 24, 12:10', item: 'Dell XPS 15', icon: <Laptop />, score: '84%', status: 'success' },
+    { date: 'Oct 24, 11:30', item: 'Sony WH-1000XM5', icon: <Headphones />, score: 'Pending', status: 'pending' },
+  ];
+
+  return (
+    <div className="flex h-screen overflow-hidden">
+      {/* Sidebar - Desktop */}
+      <aside className="hidden lg:flex flex-col w-64 bg-surface border-r border-on-surface/5 p-6 shrink-0">
+        <div className="mb-12">
+          <h1 className="text-xl font-extrabold tracking-tight text-on-surface">TrustChain AI</h1>
+          <p className="text-[10px] font-bold text-on-surface-variant/60 uppercase tracking-widest mt-1">Enterprise Tier</p>
+        </div>
+
+        <nav className="flex-1 space-y-2">
+            {[
+                { name: 'Overview', icon: <LayoutDashboard size={20} />, active: true },
+                { name: 'Analytics', icon: <BarChart3 size={20} /> },
+                { name: 'Reports', icon: <FileText size={20} /> },
+                { name: 'Settings', icon: <Settings size={20} /> },
+            ].map((item) => (
+                <button 
+                  key={item.name}
+                  className={`w-full flex items-center gap-3 p-3 rounded-xl text-sm font-bold transition-all ${item.active ? 'bg-secondary-container text-on-secondary-container shadow-lg shadow-secondary-container/20' : 'text-on-surface-variant hover:bg-surface-container-high'}`}
+                >
+                    {item.icon}
+                    {item.name}
+                </button>
+            ))}
+        </nav>
+
+        <div className="mt-auto space-y-2 pt-6 border-t border-on-surface/5">
+            <button className="w-full mb-6 py-4 px-6 bg-on-tertiary-container text-white font-bold text-sm rounded-2xl hover:opacity-90 transition-all shadow-lg shadow-on-tertiary-container/10">
+                Upgrade Plan
+            </button>
+            <button className="w-full flex items-center gap-3 p-3 rounded-xl text-sm font-bold text-on-surface-variant hover:bg-surface-container-high transition-all">
+                <HelpCircle size={20} />
+                Support
+            </button>
+            <button className="w-full flex items-center gap-3 p-3 rounded-xl text-sm font-bold text-on-surface-variant hover:bg-surface-container-high transition-all">
+                <LogOut size={20} />
+                Logout
+            </button>
+        </div>
+      </aside>
+
+      {/* Main Content Area */}
+      <div className="flex-1 flex flex-col min-w-0 bg-surface-container-lowest overflow-y-auto">
+        {/* Top Navbar */}
+        <header className="sticky top-0 z-40 bg-white/70 backdrop-blur-xl border-b border-on-surface/5 px-8 py-4 flex items-center justify-between">
+            <div className="flex-1 max-w-lg relative hidden md:block">
+                <Search size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant/60" />
+                <input 
+                    type="text" 
+                    placeholder="Global verification search..." 
+                    className="w-full h-11 pl-12 pr-6 rounded-full bg-surface-container-low border-on-surface/10 text-sm font-medium focus:ring-2 focus:ring-secondary focus:border-transparent outline-none"
+                />
+            </div>
+            
+            <div className="flex items-center gap-6">
+                 <div className="flex items-center gap-4 text-on-surface-variant">
+                    <button className="p-2 hover:bg-surface-container rounded-full transition-colors"><Bell size={20} /></button>
+                    <button className="p-2 hover:bg-surface-container rounded-full transition-colors"><HelpCircle size={20} /></button>
+                 </div>
+                 <Link to="/verify">
+                    <button className="bg-on-surface text-on-secondary px-6 h-10 rounded-full text-xs font-bold hover:opacity-90 active:scale-95 transition-all">
+                        Verify Now
+                    </button>
+                 </Link>
+                 <div className="w-10 h-10 rounded-full overflow-hidden border border-on-surface/10 bg-surface-container-high">
+                    <img 
+                      src="https://lh3.googleusercontent.com/aida-public/AB6AXuAJayloBn3S82ar5ASd-FxleRXQII9Ymoww5KpCg5_AL--dt13zq4cXC-A9Zw--T9oFW9Biz9Z_SU-uAEaASobPUAoY1idZ5MvVMj2eGWLZTSCG3apucMqNo_6JWCLz3tvbk380XfnZXxo2S7L1N8AFa62WDSJt98sBUFeRIJTsboF6BI5WWr5emVkEVUZ-KMMRbQe6NBVnOs6EhbXR7r5w64tMvw71Emw7hDeBxMrZriRp3Dy0eY6rUWe-msyjdMTb96WXIQrYaCg" 
+                      className="w-full h-full object-cover"
+                      alt="User"
+                    />
+                 </div>
+            </div>
+        </header>
+
+        {/* Dashboard Content */}
+        <div className="p-8 space-y-12">
+            {/* Page Header */}
+            <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
+                <div>
+                   <h2 className="text-3xl font-bold text-on-surface">Dashboard Overview</h2>
+                   <p className="text-on-surface-variant font-medium text-base">Monitoring digital integrity across the ecosystem.</p>
+                </div>
+                <div className="flex items-center gap-3 bg-on-tertiary-container/10 px-4 py-2 rounded-xl border border-on-tertiary-container/10">
+                    <Zap size={18} fill="currentColor" className="text-on-tertiary-container" />
+                    <span className="text-sm font-bold text-on-tertiary-container">AI Engine Live Analysis</span>
+                    <div className="w-2.5 h-2.5 bg-on-tertiary-container rounded-full animate-pulse" />
+                </div>
+            </div>
+
+            {/* Stats Grid */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                {stats.map((stat, idx) => (
+                    <motion.div 
+                        key={idx}
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: idx * 0.05 }}
+                        className={`bg-white border border-on-surface/5 p-6 rounded-2xl shadow-sm relative overflow-hidden ${stat.border || ''}`}
+                    >
+                        <div className="flex justify-between items-start mb-6">
+                            <div className={`p-2.5 rounded-xl ${stat.color}`}>
+                                {stat.icon}
+                            </div>
+                            <span className="text-xs font-bold text-on-tertiary-container bg-on-tertiary-container/10 px-2 py-0.5 rounded-full">{stat.change}</span>
+                        </div>
+                        <p className="text-sm font-bold text-on-surface-variant opacity-60 mb-1">{stat.label}</p>
+                        <h3 className="text-3xl font-bold text-on-surface">{stat.value}</h3>
+                    </motion.div>
+                ))}
+            </div>
+
+            {/* Main Section */}
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                {/* Table Section */}
+                <div className="lg:col-span-2 bg-white border border-on-surface/5 rounded-3xl overflow-hidden flex flex-col shadow-sm">
+                    <div className="px-8 py-6 border-b border-on-surface/5 flex justify-between items-center">
+                        <h4 className="text-xl font-bold text-on-surface">Recent Verifications</h4>
+                        <button className="text-secondary text-sm font-bold hover:underline">View All</button>
+                    </div>
+                    <div className="overflow-x-auto">
+                        <table className="w-full text-left">
+                           <thead className="bg-surface-container-low/50">
+                               <tr className="text-[11px] font-bold text-on-surface-variant uppercase tracking-widest">
+                                   <th className="px-8 py-4">Date</th>
+                                   <th className="px-8 py-4">Item</th>
+                                   <th className="px-8 py-4">Trust Score</th>
+                                   <th className="px-8 py-4">Action</th>
+                               </tr>
+                           </thead>
+                           <tbody className="divide-y divide-on-surface/5">
+                               {recentVerifications.map((row, idx) => (
+                                   <tr key={idx} className="group hover:bg-surface-container-low transition-colors">
+                                       <td className="px-8 py-5 text-sm font-medium text-on-surface">{row.date}</td>
+                                       <td className="px-8 py-5">
+                                           <div className="flex items-center gap-3">
+                                               <span className="text-on-surface-variant">{row.icon}</span>
+                                               <span className="text-sm font-bold text-on-surface">{row.item}</span>
+                                           </div>
+                                       </td>
+                                       <td className="px-8 py-5">
+                                           <div className={`flex items-center gap-1.5 px-3 py-1 rounded-full w-fit ${
+                                               row.status === 'success' ? 'bg-on-tertiary-container/10 text-on-tertiary-container' : 
+                                               row.status === 'error' ? 'bg-error/10 text-error' : 
+                                               'bg-surface-container-high text-on-surface-variant'
+                                           }`}>
+                                               {row.status === 'success' && <ShieldCheck size={14} fill="currentColor" />}
+                                               {row.status === 'error' && <AlertTriangle size={14} fill="currentColor" />}
+                                               <span className="text-[11px] font-extrabold">{row.score}</span>
+                                           </div>
+                                       </td>
+                                       <td className="px-8 py-5">
+                                           <button className="px-4 py-1.5 border border-on-surface/10 text-[11px] font-bold rounded-lg group-hover:bg-on-surface group-hover:text-white transition-all">
+                                               {row.status === 'error' ? 'Investigate' : 'Details'}
+                                           </button>
+                                       </td>
+                                   </tr>
+                               ))}
+                           </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                {/* Sidebar Info */}
+                <div className="flex flex-col gap-8">
+                    {/* AI Insight */}
+                    <motion.div 
+                        whileHover={{ scale: 1.02 }}
+                        className="bg-primary-container p-8 rounded-3xl text-white relative overflow-hidden group shadow-xl shadow-primary-container/20"
+                    >
+                        <div className="relative z-10 space-y-8">
+                            <div className="flex items-center gap-3">
+                                <Zap size={24} className="text-on-tertiary-container" fill="currentColor" />
+                                <span className="text-xs font-bold text-on-primary-container uppercase tracking-widest">Strategic Insight</span>
+                            </div>
+                            <p className="text-base font-medium leading-relaxed">Vendors in the 'Consumer Electronics' segment show a 15% increase in verification success this quarter.</p>
+                            <button className="flex items-center gap-2 text-on-tertiary-container text-sm font-bold group-hover:translate-x-2 transition-transform">
+                                Read Full Audit <ArrowRight size={18} />
+                            </button>
+                        </div>
+                        <div className="absolute -right-8 -bottom-8 w-40 h-40 bg-secondary/20 rounded-full blur-3xl group-hover:scale-125 transition-transform duration-1000" />
+                    </motion.div>
+
+                    {/* Top Vendors */}
+                    <div className="bg-white border border-on-surface/5 p-8 rounded-3xl shadow-sm space-y-6">
+                        <h4 className="text-xs font-bold text-on-surface-variant uppercase tracking-widest opacity-60">Top Active Vendors</h4>
+                        <div className="space-y-6">
+                            {[
+                                { name: 'Konga Marketplace', initial: 'K', status: 'Active', color: 'text-secondary' },
+                                { name: 'Jumia Tech', initial: 'J', status: 'Active', color: 'text-secondary' },
+                                { name: 'Slot Nigeria', initial: 'S', status: 'Alert', color: 'text-error' },
+                            ].map((vendor, idx) => (
+                                <div key={idx} className="flex items-center justify-between pb-4 border-b border-on-surface/5 last:border-0 last:pb-0">
+                                   <div className="flex items-center gap-4">
+                                       <div className="w-10 h-10 rounded-xl bg-surface-container-high flex items-center justify-center font-bold text-secondary text-lg">{vendor.initial}</div>
+                                       <span className="text-sm font-bold text-on-surface">{vendor.name}</span>
+                                   </div>
+                                   <span className={`text-[10px] font-extrabold uppercase tracking-widest ${vendor.status === 'Active' ? 'text-on-tertiary-container' : 'text-error'}`}>
+                                       {vendor.status}
+                                   </span>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        {/* Footer */}
+        <footer className="mt-auto px-8 py-6 border-t border-on-surface/5 flex flex-col md:flex-row justify-between items-center gap-4 bg-surface-container-low/30">
+            <div className="flex flex-col md:flex-row items-center gap-4">
+                <span className="text-lg font-bold text-on-surface">TrustChain AI</span>
+                <p className="text-xs text-on-surface-variant opacity-60">© 2024 TrustChain AI. Digital Integrity for the African Ecosystem.</p>
+            </div>
+            <div className="flex gap-8 text-xs font-bold text-on-surface-variant/60">
+                <a href="#" className="hover:text-secondary">Privacy Policy</a>
+                <a href="#" className="hover:text-secondary">Terms of Service</a>
+                <a href="#" className="hover:text-secondary">Security Audit</a>
+            </div>
+        </footer>
+      </div>
+    </div>
+  );
+}
+
+
+
+####################################################################################################
+FILE: views\Landing.tsx
+####################################################################################################
+
+import { ArrowRight, QrCode, ShieldCheck, Zap, BarChart3, Globe } from 'lucide-react';
+import { motion } from 'motion/react';
+import { Link } from 'react-router-dom';
+
+const containerVariants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.1
+    }
+  }
+};
+
+const itemVariants = {
+  hidden: { opacity: 0, y: 20 },
+  visible: { opacity: 1, y: 0 }
+};
+
+export default function Landing() {
+  return (
+    <div className="flex flex-col">
+      {/* Hero Section */}
+      <section className="relative pt-12 pb-24 px-4 md:px-12 overflow-hidden">
+        <div className="absolute inset-0 z-0 pointer-events-none">
+          <div className="absolute top-[-10%] right-[-10%] w-[500px] h-[500px] bg-secondary/5 rounded-full blur-[100px]" />
+          <div className="absolute bottom-[-10%] left-[-10%] w-[400px] h-[400px] bg-on-tertiary-container/5 rounded-full blur-[80px]" />
+        </div>
+
+        <div className="relative z-10 max-w-7xl mx-auto flex flex-col lg:flex-row items-center gap-16">
+          <motion.div 
+            initial={{ opacity: 0, x: -30 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.6 }}
+            className="w-full lg:w-1/2 space-y-8"
+          >
+            <div className="inline-flex items-center gap-2 bg-on-tertiary-container/10 text-on-tertiary-container px-4 py-1.5 rounded-full">
+              <Zap size={16} fill="currentColor" />
+              <span className="text-xs font-bold uppercase tracking-wider">AI-Powered Integrity</span>
+            </div>
+            
+            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-on-surface leading-[1.1] tracking-tight">
+              Verify Before You Pay. <span className="text-secondary">Secure Your Supply Chain</span> with AI.
+            </h1>
+            
+            <p className="text-lg text-on-surface-variant max-w-lg leading-relaxed">
+              Bridge the trust gap in the Nigerian retail ecosystem. Leverage advanced AI risk assessments to validate products and vendors instantly.
+            </p>
+            
+            <div className="flex flex-col sm:flex-row gap-4 pt-4">
+              <Link to="/verify">
+                <motion.button 
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                  className="w-full sm:w-auto bg-secondary text-on-secondary h-14 px-8 rounded-xl font-bold flex items-center justify-center gap-2 shadow-lg shadow-secondary/20"
+                >
+                  <QrCode size={20} />
+                  Verify Product
+                </motion.button>
+              </Link>
+              <Link to="/verify">
+                <motion.button 
+                   whileHover={{ scale: 1.02 }}
+                   whileTap={{ scale: 0.98 }}
+                  className="w-full sm:w-auto border-2 border-secondary text-secondary h-14 px-8 rounded-xl font-bold flex items-center justify-center gap-2 hover:bg-secondary/5 transition-colors"
+                >
+                  <ShieldCheck size={20} />
+                  Verify Vendor
+                </motion.button>
+              </Link>
+            </div>
+          </motion.div>
+
+          <motion.div 
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.8, delay: 0.2 }}
+            className="w-full lg:w-1/2 relative"
+          >
+            <div className="bg-surface-container-low p-4 rounded-2xl border border-on-surface/10 shadow-2xl overflow-hidden group">
+              <img 
+                src="https://lh3.googleusercontent.com/aida-public/AB6AXuDFka592mT0shieLsgMq2kuFBbUXxij4X-BZWjCFnN8HggP9jVhj8VLfbBR6O_xQfkkzYRF7z3b0w_PHNjGsZJxVGXgGkkhebXOEeFW8D_4vo_Gk9l7LQbv1OgTRkic9wYoGygVD9THjH_xLY2-9pUb9XCW-7-AH7cJ1z8R5xVtX6WnIys5io9f5r2PNZoVj8tXCqyWTZJyxO-CWGJEmgaCL2ka2SFaej9Q-cG8blsuoyRFJKedmvePpoyVjO0kW1-CbjKhxAPnpTI" 
+                alt="AI Dashboard" 
+                className="rounded-xl w-full h-auto grayscale-[0.2] transition-all duration-700 group-hover:grayscale-0"
+              />
+              {/* Floating Glass Card */}
+              <motion.div 
+                initial={{ y: 20, opacity: 0 }}
+                animate={{ y: 0, opacity: 1 }}
+                transition={{ delay: 1, duration: 0.5 }}
+                className="absolute bottom-10 right-10 glass-panel p-4 rounded-xl shadow-xl max-w-[240px]"
+              >
+                <div className="flex items-center gap-3 mb-2">
+                  <div className="w-10 h-10 rounded-full bg-on-tertiary-container/10 flex items-center justify-center text-on-tertiary-container">
+                    <ShieldCheck size={20} />
+                  </div>
+                  <div>
+                    <p className="text-xs font-medium text-on-surface">Trust Score</p>
+                    <p className="text-2xl font-bold text-on-tertiary-container">98%</p>
+                  </div>
+                </div>
+                <p className="text-[10px] text-on-surface-variant font-medium">Verified via TrustChain AI Engine</p>
+              </motion.div>
+            </div>
+          </motion.div>
+        </div>
+      </section>
+
+      {/* Partners Section */}
+      <section className="py-12 bg-white border-y border-on-surface/5">
+        <div className="max-w-7xl mx-auto px-4 md:px-12 flex flex-col items-center">
+            <p className="text-xs font-bold text-on-surface-variant mb-8 uppercase tracking-[0.2em]">Industry Partnerships</p>
+            <div className="flex flex-wrap justify-center items-center gap-12 md:gap-24 opacity-50">
+                <div className="flex items-center gap-2">
+                    <div className="w-8 h-8 bg-secondary rounded flex items-center justify-center text-white font-bold text-xs">S</div>
+                    <span className="text-xl font-extrabold tracking-tight">Powered by Squad</span>
+                </div>
+                <span className="text-xl font-bold">Digital Integrity Hub</span>
+                <span className="text-xl font-bold">SafeTrade NG</span>
+            </div>
+        </div>
+      </section>
+
+      {/* Features Bento Grid */}
+      <section className="py-24 px-4 md:px-12 max-w-7xl mx-auto">
+        <div className="text-center mb-16">
+          <h2 className="text-3xl md:text-4xl font-bold text-on-surface mb-4">Advanced Protection for Every Stakeholder</h2>
+          <p className="text-lg text-on-surface-variant max-w-2xl mx-auto">Our multi-layered AI approach ensures that every transaction is backed by data, not just promises.</p>
+        </div>
+        
+        <div className="grid grid-cols-1 md:grid-cols-12 gap-6">
+          {/* Main Card */}
+          <motion.div 
+            whileHover={{ y: -5 }}
+            className="md:col-span-8 bg-white p-8 md:p-12 rounded-3xl border border-on-surface/5 flex flex-col justify-between group overflow-hidden relative"
+          >
+            <div className="absolute top-0 right-0 w-64 h-64 bg-secondary/5 rounded-full translate-x-1/2 -translate-y-1/2 group-hover:scale-110 transition-transform duration-700" />
+            <div className="relative z-10">
+              <div className="w-14 h-14 bg-error-container/40 text-error rounded-2xl flex items-center justify-center mb-8">
+                <ShieldCheck size={32} />
+              </div>
+              <h3 className="text-2xl font-bold text-on-surface mb-4">99.9% Fraud Reduction</h3>
+              <p className="text-on-surface-variant max-w-md text-base leading-relaxed">
+                Our neural networks analyze over 50 data points per transaction to detect counterfeit products and fraudulent vendor patterns before you part with your capital.
+              </p>
+            </div>
+            <div className="mt-12 flex gap-2 relative z-10">
+              <span className="bg-error/10 text-error px-4 py-1 rounded-full text-xs font-bold">High Risk Flagged</span>
+              <span className="bg-on-tertiary-container/10 text-on-tertiary-container px-4 py-1 rounded-full text-xs font-bold">System Alert</span>
+            </div>
+          </motion.div>
+
+          {/* Side Card */}
+          <motion.div 
+            whileHover={{ y: -5 }}
+            className="md:col-span-4 bg-primary-container p-8 md:p-12 rounded-3xl flex flex-col justify-between text-white"
+          >
+            <div>
+              <div className="w-14 h-14 bg-white/10 text-white rounded-2xl flex items-center justify-center mb-8">
+                <Zap size={32} />
+              </div>
+              <h3 className="text-2xl font-bold mb-4">Squad API Native</h3>
+              <p className="text-on-primary-container text-sm leading-relaxed">
+                Seamlessly integrated with Squad's payment infrastructure for instant escrow and secure settlements.
+              </p>
+            </div>
+            <Link to="#" className="mt-8 inline-flex items-center gap-2 text-secondary-fixed text-sm font-bold group">
+                View Documentation
+                <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />
+            </Link>
+          </motion.div>
+
+          {/* Bottom Left */}
+          <motion.div 
+            whileHover={{ y: -5 }}
+            className="md:col-span-4 bg-surface-container-high p-8 md:p-12 rounded-3xl border border-on-surface/5"
+          >
+            <div className="w-14 h-14 bg-on-tertiary-container/10 text-on-tertiary-container rounded-2xl flex items-center justify-center mb-8">
+                <BarChart3 size={32} />
+            </div>
+            <h3 className="text-2xl font-bold text-on-surface mb-4">AI Trust Scores</h3>
+            <p className="text-on-surface-variant text-sm leading-relaxed">
+                Dynamic, real-time scoring system that updates vendor reliability based on historical performance and live feedback loops.
+            </p>
+          </motion.div>
+
+          {/* Bottom Right */}
+          <motion.div 
+            whileHover={{ y: -5 }}
+            className="md:col-span-8 bg-surface-container-low p-8 md:p-12 rounded-3xl border border-on-surface/5 flex flex-col md:flex-row gap-8 items-center"
+          >
+            <div className="w-full md:w-1/2">
+                <h3 className="text-2xl font-bold text-on-surface mb-4 font-sans">Built for the African Ecosystem</h3>
+                <p className="text-on-surface-variant text-sm leading-relaxed mb-6">
+                    Tailored risk models that understand local trade nuances, from Lagos wholesalers to regional distributors.
+                </p>
+                <button className="font-bold text-sm text-secondary border-b-2 border-secondary/30 hover:border-secondary transition-all">
+                    Learn about our models
+                </button>
+            </div>
+            <div className="w-full md:w-1/2 rounded-2xl overflow-hidden shadow-xl aspect-video">
+                <img 
+                    src="https://lh3.googleusercontent.com/aida-public/AB6AXuB_75Pf6lxCZzUmRZ8Lnhm3UNcAJ5Ui3zcl9NuHJpcAWBA9d3NG5b3aIgBwwoCXAYIOEa2DQuYhzlGz9ssLcA0sz0rKfpbvibbupmk__KoZzQ4z2ic0AOH-T8PgSwHYcTGXNaqmbGh035onzwKI3EZzANYR0qqBiPv4HpkYmz7L8nZGsAMpkoDaTVyxo1gjq_bmZwbO4Ojb6aMV2eBdVi-XO4YffD-HRfdb8Dk5N1i-diL1FXUGTiREW5HCwmEoxIJrvI0ngkhzuPA" 
+                    alt="African Hub" 
+                    className="w-full h-full object-cover"
+                />
+            </div>
+          </motion.div>
+        </div>
+      </section>
+
+      {/* CTA Section */}
+      <section className="py-24 px-4 md:px-12">
+        <div className="max-w-7xl mx-auto bg-secondary rounded-[40px] p-12 md:p-24 text-center relative overflow-hidden">
+          <div className="absolute inset-0 bg-gradient-to-br from-secondary/80 to-primary-container/80 mix-blend-overlay" />
+          <div className="relative z-10 max-w-3xl mx-auto space-y-12">
+            <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold text-on-secondary tracking-tight">Ready to Secure Your Next Shipment?</h2>
+            <p className="text-xl text-on-secondary/80 max-w-2xl mx-auto">Join thousands of vendors and retailers using TrustChain AI to eliminate transaction risk.</p>
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <motion.button 
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                className="bg-white text-secondary h-14 px-10 rounded-2xl font-bold shadow-xl transition-all"
+              >
+                Get Started Free
+              </motion.button>
+              <motion.button 
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                className="bg-secondary-container text-on-secondary-container h-14 px-10 rounded-2xl font-bold"
+              >
+                Talk to Sales
+              </motion.button>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+  );
+}
+
+
+
+####################################################################################################
+FILE: views\Result.tsx
+####################################################################################################
+
+import { useLocation, useNavigate } from "react-router-dom";
+import { ShieldCheck, AlertTriangle, ArrowLeft, CreditCard } from "lucide-react";
+import { useMemo, useState } from "react";
+import axios from "axios";
+
+const REPORT_STORAGE_KEY = "trustchain_latest_report";
+
+type Analysis = {
+  score: number;
+  level: string;
+  flags: string[];
+  verdict: string;
+};
+
+type Report = {
+  id: string;
+  verification_id: number;
+  payment_required?: boolean;
+  verification_fee?: number;
+  product?: {
+    name?: string;
+    batch_no?: string;
+    nafdac_no?: string;
+    price?: number;
+    ocr_text?: string;
+  };
+  vendor?: {
+    name?: string;
+  };
+  analysis: Analysis;
+};
+
+export default function Result() {
+  const location = useLocation();
+  const navigate = useNavigate();
+
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+
+  const report: Report | null = useMemo(() => {
+    const fromRoute = (location.state as { data?: Report } | null)?.data;
+    if (fromRoute) return fromRoute;
+
+    const stored = sessionStorage.getItem(REPORT_STORAGE_KEY);
+    if (!stored) return null;
+
+    try {
+      return JSON.parse(stored) as Report;
+    } catch {
+      return null;
+    }
+  }, [location.state]);
+
+  if (!report) {
+    return (
+      <div className="max-w-3xl mx-auto px-4 md:px-12 py-12">
+        <div className="bg-white rounded-3xl p-8 border border-on-surface/10 shadow-sm">
+          <p className="text-lg font-semibold text-on-surface mb-3">No verification data found.</p>
+          <p className="text-on-surface-variant">
+            Run a verification first to see the trust score and payment option.
+          </p>
+
+          <button
+            onClick={() => navigate("/verify")}
+            className="mt-6 px-4 py-2 bg-secondary text-white rounded-lg"
+          >
+            Go Back
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  const analysis = report.analysis;
+  const flags = Array.isArray(analysis.flags) ? analysis.flags : [];
+  const verificationFee = report.verification_fee ?? 1000;
+  const API_BASE_URL = import.meta.env.VITE_API_BASE_URL ?? "http://localhost:8000/api/v1";
+
+  const handlePayment = async () => {
+    try {
+      setLoading(true);
+      setError("");
+
+      const payload = {
+        email: "test@example.com",
+        amount: verificationFee,
+        verification_id: report.verification_id,
+      };
+
+      const response = await axios.post(`${API_BASE_URL}/payments/initiate`, payload);
+      const checkoutUrl = response.data?.data?.checkout_url ?? response.data?.data?.checkoutUrl;
+
+      if (checkoutUrl) {
+        window.location.href = checkoutUrl;
+      } else {
+        setError("Unable to initialize payment.");
+      }
+    } catch (err) {
+      console.error(err);
+      setError("Payment initiation failed.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <div className="max-w-4xl mx-auto px-4 md:px-12 py-12">
+      <button
+        onClick={() => navigate(-1)}
+        className="flex items-center gap-2 mb-8 text-sm font-semibold"
+      >
+        <ArrowLeft size={18} />
+        Back
+      </button>
+
+      <div className="bg-white rounded-3xl p-8 border border-on-surface/10 shadow-sm">
+        <div className="flex items-center gap-4 mb-8">
+          {analysis.level === "HIGH" ? (
+            <AlertTriangle className="text-error" size={40} />
+          ) : (
+            <ShieldCheck className="text-on-tertiary-container" size={40} />
+          )}
+
+          <div>
+            <h1 className="text-3xl font-bold">Trust Score: {analysis.score}%</h1>
+            <p className="text-on-surface-variant">{analysis.verdict}</p>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+          <div className="p-4 rounded-xl bg-surface-container-low">
+            <p className="text-xs uppercase tracking-widest text-on-surface-variant mb-1">Product</p>
+            <p className="font-semibold text-on-surface">{report.product?.name ?? "N/A"}</p>
+          </div>
+
+          <div className="p-4 rounded-xl bg-surface-container-low">
+            <p className="text-xs uppercase tracking-widest text-on-surface-variant mb-1">Price</p>
+            <p className="font-semibold text-on-surface">₦{report.product?.price ?? 0}</p>
+          </div>
+
+          <div className="p-4 rounded-xl bg-surface-container-low">
+            <p className="text-xs uppercase tracking-widest text-on-surface-variant mb-1">Verification</p>
+            <p className="font-semibold text-on-surface">
+              {report.payment_required === false ? "Not required" : "Required"}
+            </p>
+          </div>
+        </div>
+
+        <div className="mb-8">
+          <h2 className="text-xl font-bold mb-4">Risk Flags</h2>
+
+          <div className="space-y-3">
+            {flags.length > 0 ? (
+              flags.map((flag, idx) => (
+                <div key={idx} className="p-4 rounded-xl bg-surface-container-low">
+                  {flag}
+                </div>
+              ))
+            ) : (
+              <div className="p-4 rounded-xl bg-surface-container-low text-on-surface-variant">
+                No risk flags detected.
+              </div>
+            )}
+          </div>
+        </div>
+
+        {error && <div className="mb-4 text-error text-sm font-medium">{error}</div>}
+
+        {report.payment_required !== false && (
+          <button
+            onClick={handlePayment}
+            disabled={loading}
+            className="bg-secondary text-white px-8 py-4 rounded-xl font-bold inline-flex items-center gap-2 disabled:opacity-60"
+          >
+            <CreditCard size={18} />
+            {loading ? "Processing..." : `Pay ₦${verificationFee}`}
+          </button>
+        )}
+      </div>
+    </div>
+  );
+}
+
+
+####################################################################################################
+FILE: views\Verify.tsx
+####################################################################################################
+
+import { useState, FormEvent, ChangeEvent } from "react";
+import { Camera, Package, ShieldCheck, Sparkles, Tag } from "lucide-react";
+import { motion } from "framer-motion";
+import { useNavigate } from "react-router-dom";
+import { runVerification } from "../api/client";
+
+const REPORT_STORAGE_KEY = "trustchain_latest_report";
+
+export default function Verify() {
+  const navigate = useNavigate();
+  const [loading, setLoading] = useState(false);
+  const [image, setImage] = useState<File | null>(null);
+  const [productData, setProductData] = useState({
+    name: "",
+    batch: "",
+    nafdac: "",
+    vendor: "",
+    price: "",
+  });
+
+  const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
+    setProductData({ ...productData, [e.target.name]: e.target.value });
+  };
+
+  const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      setImage(e.target.files[0]);
+    }
+  };
+
+  const handleSubmit = async (e: FormEvent) => {
+    e.preventDefault();
+
+    if (!image) {
+      alert("Please upload a product image first.");
+      return;
+    }
+
+    if (!productData.price || Number.isNaN(Number(productData.price))) {
+      alert("Please enter a valid product price.");
+      return;
+    }
+
+    setLoading(true);
+
+    const formData = new FormData();
+    formData.append("product_name", productData.name);
+    formData.append("batch_no", productData.batch);
+    formData.append("nafdac_no", productData.nafdac);
+    formData.append("price", productData.price);
+    formData.append("vendor_name", productData.vendor);
+    formData.append("image", image);
+
+    try {
+      const result = await runVerification(formData);
+
+      sessionStorage.setItem(REPORT_STORAGE_KEY, JSON.stringify(result));
+      navigate("/result", { state: { data: result } });
+    } catch (error) {
+      console.error("Verification failed", error);
+      alert("Verification failed. Please try again.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <div className="max-w-7xl mx-auto w-full px-4 md:px-12 py-12">
+      <div className="mb-12">
+        <h1 className="text-3xl font-bold text-on-surface mb-2">Forensic Intelligence</h1>
+        <p className="text-on-surface-variant">Enter the product details, then run verification.</p>
+      </div>
+
+      <form onSubmit={handleSubmit}>
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 mb-16">
+          <section className="glass-panel p-8 rounded-2xl border border-on-surface/10">
+            <div className="flex items-center gap-3 mb-10 text-on-surface">
+              <Package />
+              <h2 className="text-2xl font-bold">Product Registry</h2>
+            </div>
+
+            <div className="group border-2 border-dashed border-on-surface/10 rounded-2xl p-16 flex flex-col items-center justify-center bg-surface-container-low relative">
+              <input
+                type="file"
+                accept="image/png,image/jpeg"
+                onChange={handleFileChange}
+                className="absolute inset-0 opacity-0 cursor-pointer"
+              />
+              <Camera size={48} className="text-on-surface-variant mb-4" />
+              <p className="text-sm font-bold text-on-surface">
+                {image ? image.name : "Upload Product Image"}
+              </p>
+            </div>
+
+            <div className="mt-8 space-y-6">
+              <input
+                name="name"
+                onChange={handleInputChange}
+                value={productData.name}
+                placeholder="Product Name"
+                className="w-full h-12 px-4 rounded-xl border border-on-surface/10 bg-white outline-none"
+              />
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <input
+                  name="batch"
+                  onChange={handleInputChange}
+                  value={productData.batch}
+                  placeholder="Batch No"
+                  className="w-full h-12 px-4 rounded-xl border border-on-surface/10 bg-white outline-none"
+                />
+                <input
+                  name="nafdac"
+                  onChange={handleInputChange}
+                  value={productData.nafdac}
+                  placeholder="NAFDAC No"
+                  className="w-full h-12 px-4 rounded-xl border border-on-surface/10 bg-white outline-none"
+                />
+              </div>
+
+              <div className="relative">
+                <Tag
+                  size={16}
+                  className="absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant pointer-events-none"
+                />
+                <input
+                  name="price"
+                  type="number"
+                  min="0"
+                  onChange={handleInputChange}
+                  value={productData.price}
+                  placeholder="Product Price (₦)"
+                  className="w-full h-12 pl-10 pr-4 rounded-xl border border-on-surface/10 bg-white outline-none"
+                />
+              </div>
+            </div>
+          </section>
+
+          <section className="glass-panel p-8 rounded-2xl border border-on-surface/10">
+            <div className="flex items-center gap-3 mb-10 text-secondary">
+              <ShieldCheck />
+              <h2 className="text-2xl font-bold text-on-surface">Vendor Intelligence</h2>
+            </div>
+
+            <input
+              name="vendor"
+              onChange={handleInputChange}
+              value={productData.vendor}
+              placeholder="Vendor/Business Name"
+              className="w-full h-12 px-4 rounded-xl border border-on-surface/10 bg-white outline-none"
+            />
+          </section>
+        </div>
+
+        <div className="flex flex-col items-center gap-6">
+          <motion.button
+            type="submit"
+            whileTap={{ scale: 0.97 }}
+            disabled={loading}
+            className="bg-on-tertiary-container text-white px-12 h-14 rounded-xl font-bold flex items-center gap-3 shadow-xl disabled:opacity-60"
+          >
+            <Sparkles size={20} />
+            {loading ? "Analyzing Neural Data..." : "Run AI Verification"}
+          </motion.button>
+        </div>
+      </form>
+    </div>
+  );
+}
+
+
+====================================================================================================
+SOURCE ROOT:
+C:\Users\HP\Downloads\the-full-app-trust-ai-main (1)\the-full-app-trust-ai-main\trustchain backend\trustchain-backend\app
+====================================================================================================
+
+
+####################################################################################################
+FILE: combined_backend_code.txt
+####################################################################################################
+
+===== DIRECTORY STRUCTURE =====
+
+[app]
+    combined_backend_code.txt
+    database.py
+    main.py
+    models.py
+    __init__.py
+    [api]
+        payments.py
+        verify.py
+        __init__.py
+    [core]
+        config.py
+        nafdac_list.py
+        scoring.py
+        __init__.py
+    [services]
+        ocr.py
+        __init__.py
+
+
+===== FILE CONTENTS =====
+
+
+================================================================================
+FILE: combined_backend_code.txt
+================================================================================
+
+
+
+
+================================================================================
+FILE: database.py
+================================================================================
+
+from sqlalchemy import create_engine
+from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.orm import sessionmaker
+
+from app.core.config import settings
+
+if settings.DATABASE_URL.startswith("sqlite"):
+    engine = create_engine(
+        settings.DATABASE_URL,
+        connect_args={"check_same_thread": False},
+    )
+else:
+    engine = create_engine(settings.DATABASE_URL)
+
+SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+Base = declarative_base()
+
+
+def get_db():
+    db = SessionLocal()
+    try:
+        yield db
+    finally:
+        db.close()
+
+
+================================================================================
+FILE: main.py
+================================================================================
+
+import time
+
+from fastapi import FastAPI, Request
+from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import JSONResponse
+
+from app.api import payments, verify
+from app.core.config import settings
+from app.database import Base, engine
+
+Base.metadata.create_all(bind=engine)
+
+app = FastAPI(
+    title=settings.PROJECT_NAME,
+    description="Product & Vendor Verification Engine",
+    version=settings.VERSION,
+)
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+
+@app.middleware("http")
+async def add_process_time_header(request: Request, call_next):
+    start_time = time.time()
+    response = await call_next(request)
+    response.headers["X-Process-Time"] = str(time.time() - start_time)
+    return response
+
+
+@app.exception_handler(Exception)
+async def global_exception_handler(request: Request, exc: Exception):
+    return JSONResponse(
+        status_code=500,
+        content={
+            "error": "Internal Server Error",
+            "message": str(exc),
+            "path": request.url.path,
+        },
+    )
+
+
+app.include_router(verify.router, prefix="/api/v1/verify", tags=["Verification"])
+app.include_router(payments.router, prefix="/api/v1/payments", tags=["Payments"])
+
+
+@app.get("/", tags=["System"])
+async def health_check():
+    return {
+        "project": "TrustChain AI",
+        "status": "Operational",
+        "squad_gateway": "Active" if settings.SQUAD_SECRET_KEY else "Key Missing",
+        "timestamp": time.time(),
+    }
+
+
+if __name__ == "__main__":
+    import uvicorn
+
+    uvicorn.run("app.main:app", host="0.0.0.0", port=8000, reload=True)
+
+
+================================================================================
+FILE: models.py
+================================================================================
+
+from datetime import datetime
+
+from sqlalchemy import Boolean, Column, DateTime, Float, Integer, JSON, String
+
+from app.database import Base
+
+
+class Verification(Base):
+    __tablename__ = "verifications"
+
+    id = Column(Integer, primary_key=True, index=True)
+    timestamp = Column(DateTime, default=datetime.utcnow, nullable=False)
+
+    product_name = Column(String, index=True, nullable=False)
+    batch_no = Column(String, nullable=True)
+    nafdac_no = Column(String, nullable=True)
+    price = Column(Float, nullable=False)
+
+    vendor_name = Column(String, index=True, nullable=True)
+
+    ocr_text = Column(String, nullable=True)
+
+    score = Column(Integer, nullable=False)
+    level = Column(String, nullable=False)
+    flags = Column(JSON, default=list)
+    verdict = Column(String, nullable=False)
+
+    paid = Column(Boolean, default=False, nullable=False)
+    squad_transaction_ref = Column(String, nullable=True, index=True)
+
+
+================================================================================
+FILE: __init__.py
+================================================================================
+
+# TrustChain AI — App Package
+# Router registration is handled in app/main.py
+# Do NOT put app.include_router() calls here — `app` doesn't exist at this scope
+
+
+
+================================================================================
+FILE: api\payments.py
+================================================================================
+
+from typing import Any, Dict, Optional
+
+import httpx
+from fastapi import APIRouter, Depends, HTTPException, Request
+from pydantic import BaseModel
+from sqlalchemy.orm import Session
+
+from app.core.config import settings
+from app.database import get_db
+from app.models import Verification
+
+router = APIRouter()
+
+
+class PaymentRequest(BaseModel):
+    email: str
+    amount: int
+    verification_id: int
+
+
+@router.post("/initiate")
+async def initiate_payment(req: PaymentRequest):
+    if not settings.SQUAD_SECRET_KEY:
+        raise HTTPException(status_code=500, detail="Squad API key missing")
+
+    headers = {
+        "Authorization": f"Bearer {settings.SQUAD_SECRET_KEY}",
+        "Content-Type": "application/json",
+    }
+
+    payload = {
+        "amount": req.amount,
+        "email": req.email,
+        "currency": "NGN",
+        "initiate_type": "inline",
+        "metadata": {
+            "verification_id": req.verification_id
+        },
+    }
+
+    async with httpx.AsyncClient(timeout=30) as client:
+        response = await client.post(
+            f"{settings.SQUAD_BASE_URL}/transaction/initiate",
+            json=payload,
+            headers=headers,
+        )
+
+    if response.status_code not in (200, 201):
+        raise HTTPException(status_code=response.status_code, detail=response.text)
+
+    return response.json()
+
+
+@router.post("/webhook")
+async def squad_webhook(request: Request, db: Session = Depends(get_db)):
+    payload: Dict[str, Any] = await request.json()
+
+    event = payload.get("Event") or payload.get("event")
+    body = payload.get("Body") or payload.get("body") or payload.get("data") or {}
+    meta = body.get("meta") or body.get("metadata") or {}
+
+    verification_id: Optional[int] = None
+    raw_verification_id = meta.get("verification_id")
+
+    if raw_verification_id is not None:
+        try:
+            verification_id = int(raw_verification_id)
+        except Exception:
+            verification_id = None
+
+    transaction_status = (
+        body.get("transaction_status")
+        or body.get("status")
+        or payload.get("status")
+    )
+
+    transaction_ref = (
+        body.get("transaction_ref")
+        or body.get("reference")
+        or body.get("transaction_reference")
+        or payload.get("reference")
+    )
+
+    if event == "charge_successful" or str(transaction_status).lower() in {"success", "successful", "paid"}:
+        if verification_id:
+            verification = db.query(Verification).get(verification_id)
+            if verification:
+                verification.paid = True
+                if transaction_ref:
+                    verification.squad_transaction_ref = str(transaction_ref)
+                db.commit()
+
+    return {"received": True}
+
+
+================================================================================
+FILE: api\verify.py
+================================================================================
+
+from __future__ import annotations
+
+import os
+import tempfile
+
+from fastapi import APIRouter, Depends, File, Form, HTTPException, UploadFile
+from sqlalchemy.orm import Session
+
+from app.core.config import settings
+from app.core.scoring import calculate_trust_score
+from app.database import get_db
+from app.models import Verification
+from app.services.ocr import extract_label_text
+
+router = APIRouter()
+
+
+@router.post("/run")
+async def run_verification(
+    product_name: str = Form(...),
+    batch_no: str = Form(""),
+    nafdac_no: str = Form(""),
+    price: float = Form(...),
+    vendor_name: str = Form(""),
+    image: UploadFile = File(...),
+    db: Session = Depends(get_db),
+):
+    if image.content_type not in settings.ALLOWED_CONTENT_TYPES:
+        raise HTTPException(status_code=400, detail="Only JPG and PNG images are allowed.")
+
+    contents = await image.read()
+
+    if len(contents) > settings.MAX_UPLOAD_SIZE:
+        raise HTTPException(status_code=400, detail="Image file is too large. Maximum size is 5MB.")
+
+    suffix = os.path.splitext(image.filename or "")[1] or ".png"
+    temp_path = None
+
+    try:
+        with tempfile.NamedTemporaryFile(delete=False, suffix=suffix) as temp_file:
+            temp_file.write(contents)
+            temp_path = temp_file.name
+
+        ocr_text = extract_label_text(temp_path)
+
+        product_data = {
+            "product_name": product_name,
+            "batch_no": batch_no,
+            "nafdac_no": nafdac_no,
+            "price": price,
+            "market_avg": settings.MARKET_AVG,
+            "ocr_text": ocr_text,
+            "expiry_status": "active",
+        }
+
+        vendor_data = {
+            "vendor_name": vendor_name,
+            "years_in_business": 2,
+            "complaint_count": 0,
+            "is_cac_registered": True,
+        }
+
+        analysis = calculate_trust_score(product_data, vendor_data)
+
+        if settings.FEE_MODE == "product_price":
+            verification_fee = int(price * 100)
+        else:
+            verification_fee = int(settings.VERIFICATION_FEE * 100)
+
+        verification = Verification(
+            product_name=product_name,
+            batch_no=batch_no,
+            nafdac_no=nafdac_no,
+            price=price,
+            vendor_name=vendor_name,
+            ocr_text=ocr_text,
+            score=analysis.score,
+            level=analysis.level,
+            flags=analysis.flags,
+            verdict=analysis.verdict,
+            paid=False,
+        )
+
+        db.add(verification)
+        db.commit()
+        db.refresh(verification)
+
+        return {
+            "id": f"TRC-{verification.id}",
+            "verification_id": verification.id,
+            "payment_required": True,
+            "verification_fee": verification_fee,
+            "product": {
+                "name": product_name,
+                "batch_no": batch_no,
+                "nafdac_no": nafdac_no,
+                "price": price,
+                "ocr_text": ocr_text,
+            },
+            "vendor": {
+                "name": vendor_name,
+            },
+            "analysis": analysis.model_dump(),
+        }
+
+    finally:
+        if temp_path and os.path.exists(temp_path):
+            try:
+                os.remove(temp_path)
+            except OSError:
+                pass
+
+
+================================================================================
+FILE: api\__init__.py
+================================================================================
+
+from .payments import router as payments_router
+from .verify import router as verify_router
+
+__all__ = ["payments_router", "verify_router"]
+
+
+================================================================================
+FILE: core\config.py
+================================================================================
+
+from typing import List, Optional
+
+from pydantic_settings import BaseSettings
+
+
+class Settings(BaseSettings):
+    PROJECT_NAME: str = "TrustChain AI"
+    VERSION: str = "1.0.0"
+    APP_ENV: str = "development"
+
+    DATABASE_URL: str = "sqlite:///./trustchain.db"
+
+    SQUAD_SECRET_KEY: Optional[str] = None
+    SQUAD_WEBHOOK_SECRET: Optional[str] = None
+    SQUAD_BASE_URL: str = "https://sandbox-api-d.squadco.com"
+
+    MAX_UPLOAD_SIZE: int = 5 * 1024 * 1024
+    ALLOWED_CONTENT_TYPES: List[str] = ["image/jpeg", "image/png"]
+
+    VERIFICATION_FEE: int = 1000
+    FEE_MODE: str = "fixed"  # fixed | product_price
+
+    MARKET_AVG: int = 5000
+    PRICE_THRESHOLD: float = 0.6
+
+    class Config:
+        env_file = ".env"
+        case_sensitive = True
+
+
+settings = Settings()
+
+
+================================================================================
+FILE: core\nafdac_list.py
+================================================================================
+
+import json
+from pathlib import Path
+
+NAFDAC_FILE = Path(__file__).resolve().parents[2] / "nafdac_products.json"
+
+VALID_NAFDAC = set()
+
+if NAFDAC_FILE.exists():
+    try:
+        with NAFDAC_FILE.open("r", encoding="utf-8") as f:
+            data = json.load(f)
+
+        if isinstance(data, list):
+            for item in data:
+                if isinstance(item, dict):
+                    code = str(item.get("nafdac_no", "")).strip().upper()
+                    if code:
+                        VALID_NAFDAC.add(code)
+                elif isinstance(item, str):
+                    code = item.strip().upper()
+                    if code:
+                        VALID_NAFDAC.add(code)
+    except Exception:
+        VALID_NAFDAC = set()
+
+
+================================================================================
+FILE: core\scoring.py
+================================================================================
+
+import json
+import re
+from dataclasses import dataclass
+from pathlib import Path
+from typing import Dict, List, Optional
+
+from app.core.config import settings
+
+
+# =========================================================
+# LOAD NAFDAC DATABASE
+# =========================================================
+
+# safer relative-path approach
+NAFDAC_FILE_PATH = (
+    Path(__file__).resolve().parents[2] / "nafdac_products.json"
+)
+
+
+def load_nafdac_db() -> set:
+    """
+    Loads approved NAFDAC numbers from JSON database.
+
+    Supported formats:
+    1. ["A4-1001", "B2-2020"]
+    2. [{"nafdac_no": "A4-1001"}]
+    3. {"A4-1001": {...}}
+    """
+
+    try:
+        if not NAFDAC_FILE_PATH.exists():
+            print("[NAFDAC] Database file not found.")
+            return set()
+
+        with open(NAFDAC_FILE_PATH, "r", encoding="utf-8") as f:
+            data = json.load(f)
+
+        results = set()
+
+        # -------------------------------------------------
+        # FORMAT 1: LIST
+        # -------------------------------------------------
+        if isinstance(data, list):
+
+            for item in data:
+
+                # list[str]
+                if isinstance(item, str):
+                    code = item.strip().upper()
+
+                    if code:
+                        results.add(code)
+
+                # list[dict]
+                elif isinstance(item, dict):
+                    code = str(
+                        item.get("nafdac_no", "")
+                    ).strip().upper()
+
+                    if code:
+                        results.add(code)
+
+        # -------------------------------------------------
+        # FORMAT 2: DICT
+        # -------------------------------------------------
+        elif isinstance(data, dict):
+
+            for key in data.keys():
+                code = str(key).strip().upper()
+
+                if code:
+                    results.add(code)
+
+        print(f"[NAFDAC] Loaded {len(results)} records.")
+
+        return results
+
+    except Exception as e:
+        print(f"[NAFDAC LOAD ERROR] {e}")
+        return set()
+
+
+VALID_NAFDAC = load_nafdac_db()
+
+
+# =========================================================
+# DATA MODELS
+# =========================================================
+
+@dataclass
+class ProductInput:
+    name: str
+    price: float
+    nafdac_no: Optional[str] = None
+    ocr_text: Optional[str] = None
+    market_avg: Optional[float] = None
+    expiry_status: Optional[str] = None
+
+
+@dataclass
+class VendorInfo:
+    years_in_business: int = 0
+    complaint_count: int = 0
+    is_cac_registered: bool = False
+
+
+@dataclass
+class TrustResult:
+    score: float
+    level: str
+    verdict: str
+    flags: List[str]
+
+
+# =========================================================
+# HELPERS
+# =========================================================
+
+def normalize(text: str) -> str:
+    return str(text).lower().strip()
+
+
+def is_valid_nafdac(nafdac_no: Optional[str]) -> bool:
+    """
+    NAFDAC validation strategy:
+    1. Database lookup
+    2. Regex fallback
+    """
+
+    if not nafdac_no:
+        return False
+
+    normalized = str(nafdac_no).strip().upper()
+
+    # -----------------------------------------------------
+    # STRONGEST VALIDATION:
+    # DATABASE MATCH
+    # -----------------------------------------------------
+    if normalized in VALID_NAFDAC:
+        return True
+
+    # -----------------------------------------------------
+    # FALLBACK STRUCTURE VALIDATION
+    # -----------------------------------------------------
+    pattern = re.compile(r"^[A-Z0-9]{2,}[-/][A-Z0-9]+$")
+
+    return bool(pattern.match(normalized))
+
+
+# =========================================================
+# CORE TRUST ENGINE
+# =========================================================
+
+def calculate_trust_score(
+    product: Dict,
+    vendor: Dict
+) -> TrustResult:
+
+    score = 100.0
+    flags: List[str] = []
+
+    # =====================================================
+    # NORMALIZE INPUTS
+    # =====================================================
+
+    product_obj = ProductInput(
+        name=str(product.get("product_name", "")),
+        price=float(product.get("price", 0)),
+        nafdac_no=product.get("nafdac_no"),
+        ocr_text=product.get("ocr_text"),
+        market_avg=product.get("market_avg"),
+        expiry_status=product.get("expiry_status"),
+    )
+
+    vendor_obj = VendorInfo(
+        years_in_business=int(
+            vendor.get("years_in_business", 0)
+        ),
+        complaint_count=int(
+            vendor.get("complaint_count", 0)
+        ),
+        is_cac_registered=bool(
+            vendor.get("is_cac_registered", False)
+        ),
+    )
+
+    # =====================================================
+    # 1. NAFDAC VALIDATION
+    # =====================================================
+
+    if not is_valid_nafdac(product_obj.nafdac_no):
+        score -= 35
+        flags.append(
+            "Invalid or unverified NAFDAC registration"
+        )
+
+    # =====================================================
+    # 2. PRICE ANOMALY DETECTION
+    # =====================================================
+
+    market_avg = (
+        product_obj.market_avg
+        or getattr(settings, "MARKET_AVG", 0)
+    )
+
+    if market_avg > 0:
+
+        # suspiciously cheap
+        if product_obj.price < market_avg * 0.6:
+            score -= 20
+            flags.append(
+                "Price significantly below market average"
+            )
+
+        # suspiciously expensive
+        elif product_obj.price > market_avg * 1.8:
+            score -= 10
+            flags.append(
+                "Price unusually high"
+            )
+
+    # =====================================================
+    # 3. EXPIRY ANALYSIS
+    # =====================================================
+
+    if product_obj.expiry_status == "expired":
+        score -= 40
+        flags.append("Product is expired")
+
+    # =====================================================
+    # 4. VENDOR TRUST ANALYSIS
+    # =====================================================
+
+    if vendor_obj.years_in_business < 1:
+        score -= 15
+        flags.append(
+            "Vendor has less than 1 year of history"
+        )
+
+    if vendor_obj.complaint_count > 2:
+        score -= 25
+        flags.append(
+            "Multiple unresolved complaints"
+        )
+
+    if not vendor_obj.is_cac_registered:
+        score -= 20
+        flags.append(
+            "Vendor not CAC registered"
+        )
+
+    # =====================================================
+    # 5. OCR LABEL INTEGRITY
+    # =====================================================
+
+    if product_obj.ocr_text:
+
+        product_name_normalized = normalize(
+            product_obj.name
+        )
+
+        ocr_normalized = normalize(
+            product_obj.ocr_text
+        )
+
+        if product_name_normalized not in ocr_normalized:
+            score -= 10
+            flags.append(
+                "Product label mismatch detected (OCR)"
+            )
+
+    # =====================================================
+    # FINAL SCORE NORMALIZATION
+    # =====================================================
+
+    score = max(0, min(100, score))
+
+    # =====================================================
+    # RISK CLASSIFICATION
+    # =====================================================
+
+    if score >= 80:
+        level = "LOW"
+        verdict = "Likely Genuine"
+
+    elif score >= 60:
+        level = "MEDIUM"
+        verdict = "Proceed with Caution"
+
+    else:
+        level = "HIGH"
+        verdict = "High Risk / Possible Fraud"
+
+    # =====================================================
+    # RETURN RESULT
+    # =====================================================
+
+    return TrustResult(
+        score=round(score, 2),
+        level=level,
+        verdict=verdict,
+        flags=flags,
+    )
+
+
+================================================================================
+FILE: core\__init__.py
+================================================================================
+
+from .config import settings
+from .scoring import calculate_trust_score
+
+__all__ = ["settings", "calculate_trust_score"]
+
+
+================================================================================
+FILE: services\ocr.py
+================================================================================
+
+import pytesseract
+from PIL import Image, ImageFilter, ImageOps
+
+
+def extract_label_text(image_path: str) -> str:
+    """
+    Perform OCR on the given image with simple preprocessing.
+    Returns uppercase text.
+    """
+    try:
+        img = Image.open(image_path)
+        img = ImageOps.exif_transpose(img)
+        img = img.convert("L")
+        img = img.filter(ImageFilter.SHARPEN)
+
+        text = pytesseract.image_to_string(img, config="--psm 6")
+        return text.upper().strip()
+    except Exception as e:
+        print(f"OCR error: {e}")
+        return ""
+
+
+================================================================================
+FILE: services\__init__.py
+================================================================================
+
+from .ocr import extract_label_text
+
+__all__ = ["extract_label_text"]
+
+
+
+
+####################################################################################################
+FILE: combined_full_project.txt
+####################################################################################################
+
+====================================================================================================
+COMBINED PROJECT EXPORT
+====================================================================================================
+
+# DIRECTORY STRUCTURES
+
+
+====================================================================================================
+ROOT DIRECTORY:
+C:\Users\HP\Downloads\the-full-app-trust-ai-main (1)\the-full-app-trust-ai-main\trustchain-ai\src
+====================================================================================================
+
+[src]
+    App.tsx
+    index.css
+    main.tsx
+    [api]
+        client.ts
+    [components]
+        [layout]
+            Footer.tsx
+            Navbar.tsx
+    [views]
+        Dashboard.tsx
+        Landing.tsx
+        Result.tsx
+        Verify.tsx
+
+====================================================================================================
+ROOT DIRECTORY:
+C:\Users\HP\Downloads\the-full-app-trust-ai-main (1)\the-full-app-trust-ai-main\trustchain backend\trustchain-backend\app
+====================================================================================================
+
+[app]
+    combined_backend_code.txt
+    combined_full_project.txt
+    database.py
+    main.py
+    models.py
+    __init__.py
+    [api]
+        payments.py
+        verify.py
+        __init__.py
+    [core]
+        config.py
+        nafdac_list.py
+        scoring.py
+        __init__.py
+    [services]
+        ocr.py
+        __init__.py
+
+
+====================================================================================================
+FILE CONTENTS
+====================================================================================================
+
+
+====================================================================================================
+SOURCE ROOT:
+C:\Users\HP\Downloads\the-full-app-trust-ai-main (1)\the-full-app-trust-ai-main\trustchain-ai\src
+====================================================================================================
+
+
+####################################################################################################
+FILE: App.tsx
+####################################################################################################
+
+/**
+ * @license
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
+import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
+import { AnimatePresence, motion } from 'motion/react';
+import Navbar from './components/layout/Navbar';
+import Footer from './components/layout/Footer';
+import Landing from './views/Landing';
+import Verify from './views/Verify';
+import Result from './views/Result';
+import Dashboard from './views/Dashboard';
+
+function AppContent() {
+  const location = useLocation();
+  const isDashboard = location.pathname.startsWith('/dashboard');
+
+  return (
+    <div className="min-h-screen flex flex-col font-sans selection:bg-secondary/20 selection:text-secondary">
+      {!isDashboard && <Navbar />}
+      <main className="flex-grow">
+        <AnimatePresence mode="wait">
+          <Routes location={location}>
+            <Route 
+              path="/" 
+              element={
+                <motion.div
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 0.3 }}
+                >
+                  <Landing />
+                </motion.div>
+              } 
+            />
+            <Route 
+              path="/verify" 
+              element={
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.98 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0, scale: 1.02 }}
+                  transition={{ duration: 0.3 }}
+                >
+                  <Verify />
+                </motion.div>
+              } 
+            />
+            <Route 
+              path="/result" 
+              element={
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -20 }}
+                  transition={{ duration: 0.3 }}
+                >
+                   <Result />
+                </motion.div>
+              } 
+            />
+            <Route 
+              path="/dashboard" 
+              element={
+                <motion.div
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 0.3 }}
+                >
+                   <Dashboard />
+                </motion.div>
+              } 
+            />
+          </Routes>
+        </AnimatePresence>
+      </main>
+      {!isDashboard && <Footer />}
+    </div>
+  );
+}
+
+export default function App() {
+  return (
+    <Router>
+      <AppContent />
+    </Router>
+  );
+}
+
+
+
+
+####################################################################################################
+FILE: index.css
+####################################################################################################
+
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Plus Jakarta Sans", ui-sans-serif, system-ui, sans-serif;
+
+  --color-surface: #f8f9ff;
+  --color-surface-dim: #cbdbf5;
+  --color-surface-bright: #f8f9ff;
+  --color-surface-container-lowest: #ffffff;
+  --color-surface-container-low: #eff4ff;
+  --color-surface-container: #e5eeff;
+  --color-surface-container-high: #dce9ff;
+  --color-surface-container-highest: #d3e4fe;
+
+  --color-on-surface: #0b1c30;
+  --color-on-surface-variant: #45464d;
+
+  --color-primary: #000000;
+  --color-on-primary: #ffffff;
+  --color-primary-container: #131b2e;
+  --color-on-primary-container: #7c839b;
+
+  --color-secondary: #0051d5;
+  --color-on-secondary: #ffffff;
+  --color-secondary-container: #316bf3;
+  --color-on-secondary-container: #fefcff;
+
+  --color-tertiary: #000000;
+  --color-on-tertiary: #ffffff;
+  --color-tertiary-container: #00201d;
+  --color-on-tertiary-container: #0d9488;
+
+  --color-error: #ba1a1a;
+  --color-on-error: #ffffff;
+  --color-error-container: #ffdad6;
+  --color-on-error-container: #93000a;
+
+  --color-outline: #76777d;
+  --color-outline-variant: #c6c6cd;
+
+  --color-inverse-surface: #213145;
+  --color-inverse-on-surface: #eaf1ff;
+  --color-surface-tint: #565e74;
+
+  --color-primary-fixed: #dae2fd;
+  --color-primary-fixed-dim: #bec6e0;
+  --color-on-primary-fixed: #131b2e;
+
+  --color-secondary-fixed: #dbe1ff;
+  --color-secondary-fixed-dim: #b4c5ff;
+  --color-on-secondary-fixed: #00174b;
+
+  --color-tertiary-fixed: #89f5e7;
+  --color-tertiary-fixed-dim: #6bd8cb;
+  --color-on-tertiary-fixed: #00201d;
+
+  --radius-xs: 0.25rem;
+  --radius-sm: 0.5rem;
+  --radius-md: 0.75rem;
+  --radius-lg: 1rem;
+  --radius-xl: 1.5rem;
+  --radius-2xl: 2rem;
+}
+
+@layer base {
+  body {
+    @apply bg-surface text-on-surface font-sans;
+  }
+}
+
+.glass-panel {
+  @apply bg-white/70 backdrop-blur-xl border border-outline-variant/30;
+}
+
+
+####################################################################################################
+FILE: main.tsx
+####################################################################################################
+
+import { StrictMode } from "react";
+import { createRoot } from "react-dom/client";
+import App from "./App.tsx";
+import "./index.css";
+
+createRoot(document.getElementById("root")!).render(
+  <StrictMode>
+    <App />
+  </StrictMode>
+);
+
+
+####################################################################################################
+FILE: api\client.ts
+####################################################################################################
+
+const API_BASE_URL =
+  import.meta.env.VITE_API_BASE_URL || "http://localhost:8000/api/v1";
+
+async function request(path: string, options: RequestInit) {
+  const res = await fetch(`${API_BASE_URL}${path}`, options);
+
+  if (!res.ok) {
+    const error = await res.json().catch(() => ({
+      detail: `HTTP ${res.status}`,
+    }));
+    throw new Error(error.detail ?? `Request failed with status ${res.status}`);
+  }
+
+  return res.json();
+}
+
+export const api = {
+  post: (path: string, body: FormData | Record<string, unknown>, options?: RequestInit) => {
+    const isFormData = body instanceof FormData;
+
+    return request(path, {
+      method: "POST",
+      headers: isFormData ? undefined : { "Content-Type": "application/json" },
+      body: isFormData ? body : JSON.stringify(body),
+      ...options,
+    });
+  },
+  get: (path: string) => request(path, { method: "GET" }),
+};
+
+export const runVerification = async (formData: FormData) => {
+  return api.post("/verify/run", formData);
+};
+
+
+####################################################################################################
+FILE: components\layout\Footer.tsx
+####################################################################################################
+
+export default function Footer() {
+  return (
+    <footer className="bg-surface-container-low border-t border-on-surface/10 w-full py-8">
+      <div className="max-w-[1440px] mx-auto px-4 md:px-12 flex flex-col md:flex-row justify-between items-center gap-8">
+        <div>
+          <span className="text-xl font-bold text-on-surface block mb-2">TrustChain AI</span>
+          <p className="text-sm text-on-surface-variant max-w-sm">
+            © 2024 TrustChain AI. Digital Integrity for the African Ecosystem.
+          </p>
+        </div>
+        
+        <div className="flex flex-wrap justify-center gap-8 text-sm font-medium text-on-surface-variant">
+          <a href="#" className="hover:text-secondary transition-colors">Privacy Policy</a>
+          <a href="#" className="hover:text-secondary transition-colors">Terms of Service</a>
+          <a href="#" className="hover:text-secondary transition-colors">Security Audit</a>
+          <a href="#" className="hover:text-secondary transition-colors">Contact Support</a>
+        </div>
+      </div>
+    </footer>
+  );
+}
+
+
+
+####################################################################################################
+FILE: components\layout\Navbar.tsx
+####################################################################################################
+
+import { Bell, HelpCircle, Menu } from 'lucide-react';
+import { Link, useLocation } from 'react-router-dom';
+import { motion } from 'motion/react';
+import { clsx, type ClassValue } from 'clsx';
+import { twMerge } from 'tailwind-merge';
+
+function cn(...inputs: ClassValue[]) {
+  return twMerge(clsx(inputs));
+}
+
+export default function Navbar() {
+  const location = useLocation();
+  
+  const navLinks = [
+    { name: 'Dashboard', href: '/dashboard' },
+    { name: 'Verify Product', href: '/verify' },
+    { name: 'Verify Vendor', href: '/verify' }, // Simplification for demo
+    { name: 'History', href: '#' },
+  ];
+
+  return (
+    <nav className="bg-surface/70 backdrop-blur-xl border-b border-on-surface/10 sticky top-0 z-50 flex justify-between items-center w-full px-4 md:px-12 py-4">
+      <div className="flex items-center gap-8 md:gap-12">
+        <Link to="/" className="font-bold text-xl md:text-2xl text-on-surface tracking-tight outline-none">
+          TrustChain AI
+        </Link>
+        <div className="hidden md:flex gap-8">
+          {navLinks.map((link) => (
+            <Link
+              key={link.name}
+              to={link.href}
+              className={cn(
+                "text-sm font-semibold transition-colors hover:text-secondary",
+                location.pathname === link.href ? "text-secondary border-b-2 border-secondary pb-1" : "text-on-surface-variant"
+              )}
+            >
+              {link.name}
+            </Link>
+          ))}
+        </div>
+      </div>
+      
+      <div className="flex items-center gap-4">
+        <button className="p-2 text-on-surface-variant hover:text-secondary transition-colors transition-transform active:scale-95">
+          <Bell size={20} />
+        </button>
+        <button className="p-2 text-on-surface-variant hover:text-secondary transition-colors transition-transform active:scale-95">
+          <HelpCircle size={20} />
+        </button>
+        <Link to="/verify" className="hidden sm:block outline-none">
+          <motion.button 
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
+            className="bg-secondary text-on-secondary px-6 py-2 rounded-lg text-sm font-semibold transition-shadow hover:shadow-lg hover:shadow-secondary/20"
+          >
+            Verify Now
+          </motion.button>
+        </Link>
+        <div className="md:hidden">
+            <Menu size={24} className="text-on-surface" />
+        </div>
+      </div>
+    </nav>
+  );
+}
+
+
+
+####################################################################################################
+FILE: views\Dashboard.tsx
+####################################################################################################
+
+import { LayoutDashboard, BarChart3, FileText, Settings, HelpCircle, LogOut, Search, Bell, ShieldCheck, Zap, TrendingUp, AlertTriangle, CreditCard, Store, MoreHorizontal, Smartphone, Laptop, Headphones, Package, ArrowRight } from 'lucide-react';
+import { motion } from 'motion/react';
+import { Link } from 'react-router-dom';
+
+export default function Dashboard() {
+  const stats = [
+    { label: 'Total Verified', value: '42,891', change: '+12.5%', icon: <ShieldCheck />, color: 'text-secondary bg-secondary/10' },
+    { label: 'High Risk Flagged', value: '154', change: '+2.1%', icon: <AlertTriangle />, color: 'text-error bg-error/10', border: 'border-r-4 border-error' },
+    { label: 'Successful Payments', value: '₦12.4M', change: '+8.4%', icon: <CreditCard />, color: 'text-on-tertiary-container bg-on-tertiary-container/10' },
+    { label: 'Active Vendors', value: '1,208', change: '+15', icon: <Store />, color: 'text-on-primary-container bg-on-primary-container/10' },
+  ];
+
+  const recentVerifications = [
+    { date: 'Oct 24, 14:20', item: 'MacBook Pro M3', icon: <Laptop />, score: '98%', status: 'success' },
+    { date: 'Oct 24, 13:45', item: 'iPhone 15 Pro', icon: <Smartphone />, score: '12%', status: 'error' },
+    { date: 'Oct 24, 12:10', item: 'Dell XPS 15', icon: <Laptop />, score: '84%', status: 'success' },
+    { date: 'Oct 24, 11:30', item: 'Sony WH-1000XM5', icon: <Headphones />, score: 'Pending', status: 'pending' },
+  ];
+
+  return (
+    <div className="flex h-screen overflow-hidden">
+      {/* Sidebar - Desktop */}
+      <aside className="hidden lg:flex flex-col w-64 bg-surface border-r border-on-surface/5 p-6 shrink-0">
+        <div className="mb-12">
+          <h1 className="text-xl font-extrabold tracking-tight text-on-surface">TrustChain AI</h1>
+          <p className="text-[10px] font-bold text-on-surface-variant/60 uppercase tracking-widest mt-1">Enterprise Tier</p>
+        </div>
+
+        <nav className="flex-1 space-y-2">
+            {[
+                { name: 'Overview', icon: <LayoutDashboard size={20} />, active: true },
+                { name: 'Analytics', icon: <BarChart3 size={20} /> },
+                { name: 'Reports', icon: <FileText size={20} /> },
+                { name: 'Settings', icon: <Settings size={20} /> },
+            ].map((item) => (
+                <button 
+                  key={item.name}
+                  className={`w-full flex items-center gap-3 p-3 rounded-xl text-sm font-bold transition-all ${item.active ? 'bg-secondary-container text-on-secondary-container shadow-lg shadow-secondary-container/20' : 'text-on-surface-variant hover:bg-surface-container-high'}`}
+                >
+                    {item.icon}
+                    {item.name}
+                </button>
+            ))}
+        </nav>
+
+        <div className="mt-auto space-y-2 pt-6 border-t border-on-surface/5">
+            <button className="w-full mb-6 py-4 px-6 bg-on-tertiary-container text-white font-bold text-sm rounded-2xl hover:opacity-90 transition-all shadow-lg shadow-on-tertiary-container/10">
+                Upgrade Plan
+            </button>
+            <button className="w-full flex items-center gap-3 p-3 rounded-xl text-sm font-bold text-on-surface-variant hover:bg-surface-container-high transition-all">
+                <HelpCircle size={20} />
+                Support
+            </button>
+            <button className="w-full flex items-center gap-3 p-3 rounded-xl text-sm font-bold text-on-surface-variant hover:bg-surface-container-high transition-all">
+                <LogOut size={20} />
+                Logout
+            </button>
+        </div>
+      </aside>
+
+      {/* Main Content Area */}
+      <div className="flex-1 flex flex-col min-w-0 bg-surface-container-lowest overflow-y-auto">
+        {/* Top Navbar */}
+        <header className="sticky top-0 z-40 bg-white/70 backdrop-blur-xl border-b border-on-surface/5 px-8 py-4 flex items-center justify-between">
+            <div className="flex-1 max-w-lg relative hidden md:block">
+                <Search size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant/60" />
+                <input 
+                    type="text" 
+                    placeholder="Global verification search..." 
+                    className="w-full h-11 pl-12 pr-6 rounded-full bg-surface-container-low border-on-surface/10 text-sm font-medium focus:ring-2 focus:ring-secondary focus:border-transparent outline-none"
+                />
+            </div>
+            
+            <div className="flex items-center gap-6">
+                 <div className="flex items-center gap-4 text-on-surface-variant">
+                    <button className="p-2 hover:bg-surface-container rounded-full transition-colors"><Bell size={20} /></button>
+                    <button className="p-2 hover:bg-surface-container rounded-full transition-colors"><HelpCircle size={20} /></button>
+                 </div>
+                 <Link to="/verify">
+                    <button className="bg-on-surface text-on-secondary px-6 h-10 rounded-full text-xs font-bold hover:opacity-90 active:scale-95 transition-all">
+                        Verify Now
+                    </button>
+                 </Link>
+                 <div className="w-10 h-10 rounded-full overflow-hidden border border-on-surface/10 bg-surface-container-high">
+                    <img 
+                      src="https://lh3.googleusercontent.com/aida-public/AB6AXuAJayloBn3S82ar5ASd-FxleRXQII9Ymoww5KpCg5_AL--dt13zq4cXC-A9Zw--T9oFW9Biz9Z_SU-uAEaASobPUAoY1idZ5MvVMj2eGWLZTSCG3apucMqNo_6JWCLz3tvbk380XfnZXxo2S7L1N8AFa62WDSJt98sBUFeRIJTsboF6BI5WWr5emVkEVUZ-KMMRbQe6NBVnOs6EhbXR7r5w64tMvw71Emw7hDeBxMrZriRp3Dy0eY6rUWe-msyjdMTb96WXIQrYaCg" 
+                      className="w-full h-full object-cover"
+                      alt="User"
+                    />
+                 </div>
+            </div>
+        </header>
+
+        {/* Dashboard Content */}
+        <div className="p-8 space-y-12">
+            {/* Page Header */}
+            <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
+                <div>
+                   <h2 className="text-3xl font-bold text-on-surface">Dashboard Overview</h2>
+                   <p className="text-on-surface-variant font-medium text-base">Monitoring digital integrity across the ecosystem.</p>
+                </div>
+                <div className="flex items-center gap-3 bg-on-tertiary-container/10 px-4 py-2 rounded-xl border border-on-tertiary-container/10">
+                    <Zap size={18} fill="currentColor" className="text-on-tertiary-container" />
+                    <span className="text-sm font-bold text-on-tertiary-container">AI Engine Live Analysis</span>
+                    <div className="w-2.5 h-2.5 bg-on-tertiary-container rounded-full animate-pulse" />
+                </div>
+            </div>
+
+            {/* Stats Grid */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                {stats.map((stat, idx) => (
+                    <motion.div 
+                        key={idx}
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: idx * 0.05 }}
+                        className={`bg-white border border-on-surface/5 p-6 rounded-2xl shadow-sm relative overflow-hidden ${stat.border || ''}`}
+                    >
+                        <div className="flex justify-between items-start mb-6">
+                            <div className={`p-2.5 rounded-xl ${stat.color}`}>
+                                {stat.icon}
+                            </div>
+                            <span className="text-xs font-bold text-on-tertiary-container bg-on-tertiary-container/10 px-2 py-0.5 rounded-full">{stat.change}</span>
+                        </div>
+                        <p className="text-sm font-bold text-on-surface-variant opacity-60 mb-1">{stat.label}</p>
+                        <h3 className="text-3xl font-bold text-on-surface">{stat.value}</h3>
+                    </motion.div>
+                ))}
+            </div>
+
+            {/* Main Section */}
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                {/* Table Section */}
+                <div className="lg:col-span-2 bg-white border border-on-surface/5 rounded-3xl overflow-hidden flex flex-col shadow-sm">
+                    <div className="px-8 py-6 border-b border-on-surface/5 flex justify-between items-center">
+                        <h4 className="text-xl font-bold text-on-surface">Recent Verifications</h4>
+                        <button className="text-secondary text-sm font-bold hover:underline">View All</button>
+                    </div>
+                    <div className="overflow-x-auto">
+                        <table className="w-full text-left">
+                           <thead className="bg-surface-container-low/50">
+                               <tr className="text-[11px] font-bold text-on-surface-variant uppercase tracking-widest">
+                                   <th className="px-8 py-4">Date</th>
+                                   <th className="px-8 py-4">Item</th>
+                                   <th className="px-8 py-4">Trust Score</th>
+                                   <th className="px-8 py-4">Action</th>
+                               </tr>
+                           </thead>
+                           <tbody className="divide-y divide-on-surface/5">
+                               {recentVerifications.map((row, idx) => (
+                                   <tr key={idx} className="group hover:bg-surface-container-low transition-colors">
+                                       <td className="px-8 py-5 text-sm font-medium text-on-surface">{row.date}</td>
+                                       <td className="px-8 py-5">
+                                           <div className="flex items-center gap-3">
+                                               <span className="text-on-surface-variant">{row.icon}</span>
+                                               <span className="text-sm font-bold text-on-surface">{row.item}</span>
+                                           </div>
+                                       </td>
+                                       <td className="px-8 py-5">
+                                           <div className={`flex items-center gap-1.5 px-3 py-1 rounded-full w-fit ${
+                                               row.status === 'success' ? 'bg-on-tertiary-container/10 text-on-tertiary-container' : 
+                                               row.status === 'error' ? 'bg-error/10 text-error' : 
+                                               'bg-surface-container-high text-on-surface-variant'
+                                           }`}>
+                                               {row.status === 'success' && <ShieldCheck size={14} fill="currentColor" />}
+                                               {row.status === 'error' && <AlertTriangle size={14} fill="currentColor" />}
+                                               <span className="text-[11px] font-extrabold">{row.score}</span>
+                                           </div>
+                                       </td>
+                                       <td className="px-8 py-5">
+                                           <button className="px-4 py-1.5 border border-on-surface/10 text-[11px] font-bold rounded-lg group-hover:bg-on-surface group-hover:text-white transition-all">
+                                               {row.status === 'error' ? 'Investigate' : 'Details'}
+                                           </button>
+                                       </td>
+                                   </tr>
+                               ))}
+                           </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                {/* Sidebar Info */}
+                <div className="flex flex-col gap-8">
+                    {/* AI Insight */}
+                    <motion.div 
+                        whileHover={{ scale: 1.02 }}
+                        className="bg-primary-container p-8 rounded-3xl text-white relative overflow-hidden group shadow-xl shadow-primary-container/20"
+                    >
+                        <div className="relative z-10 space-y-8">
+                            <div className="flex items-center gap-3">
+                                <Zap size={24} className="text-on-tertiary-container" fill="currentColor" />
+                                <span className="text-xs font-bold text-on-primary-container uppercase tracking-widest">Strategic Insight</span>
+                            </div>
+                            <p className="text-base font-medium leading-relaxed">Vendors in the 'Consumer Electronics' segment show a 15% increase in verification success this quarter.</p>
+                            <button className="flex items-center gap-2 text-on-tertiary-container text-sm font-bold group-hover:translate-x-2 transition-transform">
+                                Read Full Audit <ArrowRight size={18} />
+                            </button>
+                        </div>
+                        <div className="absolute -right-8 -bottom-8 w-40 h-40 bg-secondary/20 rounded-full blur-3xl group-hover:scale-125 transition-transform duration-1000" />
+                    </motion.div>
+
+                    {/* Top Vendors */}
+                    <div className="bg-white border border-on-surface/5 p-8 rounded-3xl shadow-sm space-y-6">
+                        <h4 className="text-xs font-bold text-on-surface-variant uppercase tracking-widest opacity-60">Top Active Vendors</h4>
+                        <div className="space-y-6">
+                            {[
+                                { name: 'Konga Marketplace', initial: 'K', status: 'Active', color: 'text-secondary' },
+                                { name: 'Jumia Tech', initial: 'J', status: 'Active', color: 'text-secondary' },
+                                { name: 'Slot Nigeria', initial: 'S', status: 'Alert', color: 'text-error' },
+                            ].map((vendor, idx) => (
+                                <div key={idx} className="flex items-center justify-between pb-4 border-b border-on-surface/5 last:border-0 last:pb-0">
+                                   <div className="flex items-center gap-4">
+                                       <div className="w-10 h-10 rounded-xl bg-surface-container-high flex items-center justify-center font-bold text-secondary text-lg">{vendor.initial}</div>
+                                       <span className="text-sm font-bold text-on-surface">{vendor.name}</span>
+                                   </div>
+                                   <span className={`text-[10px] font-extrabold uppercase tracking-widest ${vendor.status === 'Active' ? 'text-on-tertiary-container' : 'text-error'}`}>
+                                       {vendor.status}
+                                   </span>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        {/* Footer */}
+        <footer className="mt-auto px-8 py-6 border-t border-on-surface/5 flex flex-col md:flex-row justify-between items-center gap-4 bg-surface-container-low/30">
+            <div className="flex flex-col md:flex-row items-center gap-4">
+                <span className="text-lg font-bold text-on-surface">TrustChain AI</span>
+                <p className="text-xs text-on-surface-variant opacity-60">© 2024 TrustChain AI. Digital Integrity for the African Ecosystem.</p>
+            </div>
+            <div className="flex gap-8 text-xs font-bold text-on-surface-variant/60">
+                <a href="#" className="hover:text-secondary">Privacy Policy</a>
+                <a href="#" className="hover:text-secondary">Terms of Service</a>
+                <a href="#" className="hover:text-secondary">Security Audit</a>
+            </div>
+        </footer>
+      </div>
+    </div>
+  );
+}
+
+
+
+####################################################################################################
+FILE: views\Landing.tsx
+####################################################################################################
+
+import { ArrowRight, QrCode, ShieldCheck, Zap, BarChart3, Globe } from 'lucide-react';
+import { motion } from 'motion/react';
+import { Link } from 'react-router-dom';
+
+const containerVariants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.1
+    }
+  }
+};
+
+const itemVariants = {
+  hidden: { opacity: 0, y: 20 },
+  visible: { opacity: 1, y: 0 }
+};
+
+export default function Landing() {
+  return (
+    <div className="flex flex-col">
+      {/* Hero Section */}
+      <section className="relative pt-12 pb-24 px-4 md:px-12 overflow-hidden">
+        <div className="absolute inset-0 z-0 pointer-events-none">
+          <div className="absolute top-[-10%] right-[-10%] w-[500px] h-[500px] bg-secondary/5 rounded-full blur-[100px]" />
+          <div className="absolute bottom-[-10%] left-[-10%] w-[400px] h-[400px] bg-on-tertiary-container/5 rounded-full blur-[80px]" />
+        </div>
+
+        <div className="relative z-10 max-w-7xl mx-auto flex flex-col lg:flex-row items-center gap-16">
+          <motion.div 
+            initial={{ opacity: 0, x: -30 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.6 }}
+            className="w-full lg:w-1/2 space-y-8"
+          >
+            <div className="inline-flex items-center gap-2 bg-on-tertiary-container/10 text-on-tertiary-container px-4 py-1.5 rounded-full">
+              <Zap size={16} fill="currentColor" />
+              <span className="text-xs font-bold uppercase tracking-wider">AI-Powered Integrity</span>
+            </div>
+            
+            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-on-surface leading-[1.1] tracking-tight">
+              Verify Before You Pay. <span className="text-secondary">Secure Your Supply Chain</span> with AI.
+            </h1>
+            
+            <p className="text-lg text-on-surface-variant max-w-lg leading-relaxed">
+              Bridge the trust gap in the Nigerian retail ecosystem. Leverage advanced AI risk assessments to validate products and vendors instantly.
+            </p>
+            
+            <div className="flex flex-col sm:flex-row gap-4 pt-4">
+              <Link to="/verify">
+                <motion.button 
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                  className="w-full sm:w-auto bg-secondary text-on-secondary h-14 px-8 rounded-xl font-bold flex items-center justify-center gap-2 shadow-lg shadow-secondary/20"
+                >
+                  <QrCode size={20} />
+                  Verify Product
+                </motion.button>
+              </Link>
+              <Link to="/verify">
+                <motion.button 
+                   whileHover={{ scale: 1.02 }}
+                   whileTap={{ scale: 0.98 }}
+                  className="w-full sm:w-auto border-2 border-secondary text-secondary h-14 px-8 rounded-xl font-bold flex items-center justify-center gap-2 hover:bg-secondary/5 transition-colors"
+                >
+                  <ShieldCheck size={20} />
+                  Verify Vendor
+                </motion.button>
+              </Link>
+            </div>
+          </motion.div>
+
+          <motion.div 
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.8, delay: 0.2 }}
+            className="w-full lg:w-1/2 relative"
+          >
+            <div className="bg-surface-container-low p-4 rounded-2xl border border-on-surface/10 shadow-2xl overflow-hidden group">
+              <img 
+                src="https://lh3.googleusercontent.com/aida-public/AB6AXuDFka592mT0shieLsgMq2kuFBbUXxij4X-BZWjCFnN8HggP9jVhj8VLfbBR6O_xQfkkzYRF7z3b0w_PHNjGsZJxVGXgGkkhebXOEeFW8D_4vo_Gk9l7LQbv1OgTRkic9wYoGygVD9THjH_xLY2-9pUb9XCW-7-AH7cJ1z8R5xVtX6WnIys5io9f5r2PNZoVj8tXCqyWTZJyxO-CWGJEmgaCL2ka2SFaej9Q-cG8blsuoyRFJKedmvePpoyVjO0kW1-CbjKhxAPnpTI" 
+                alt="AI Dashboard" 
+                className="rounded-xl w-full h-auto grayscale-[0.2] transition-all duration-700 group-hover:grayscale-0"
+              />
+              {/* Floating Glass Card */}
+              <motion.div 
+                initial={{ y: 20, opacity: 0 }}
+                animate={{ y: 0, opacity: 1 }}
+                transition={{ delay: 1, duration: 0.5 }}
+                className="absolute bottom-10 right-10 glass-panel p-4 rounded-xl shadow-xl max-w-[240px]"
+              >
+                <div className="flex items-center gap-3 mb-2">
+                  <div className="w-10 h-10 rounded-full bg-on-tertiary-container/10 flex items-center justify-center text-on-tertiary-container">
+                    <ShieldCheck size={20} />
+                  </div>
+                  <div>
+                    <p className="text-xs font-medium text-on-surface">Trust Score</p>
+                    <p className="text-2xl font-bold text-on-tertiary-container">98%</p>
+                  </div>
+                </div>
+                <p className="text-[10px] text-on-surface-variant font-medium">Verified via TrustChain AI Engine</p>
+              </motion.div>
+            </div>
+          </motion.div>
+        </div>
+      </section>
+
+      {/* Partners Section */}
+      <section className="py-12 bg-white border-y border-on-surface/5">
+        <div className="max-w-7xl mx-auto px-4 md:px-12 flex flex-col items-center">
+            <p className="text-xs font-bold text-on-surface-variant mb-8 uppercase tracking-[0.2em]">Industry Partnerships</p>
+            <div className="flex flex-wrap justify-center items-center gap-12 md:gap-24 opacity-50">
+                <div className="flex items-center gap-2">
+                    <div className="w-8 h-8 bg-secondary rounded flex items-center justify-center text-white font-bold text-xs">S</div>
+                    <span className="text-xl font-extrabold tracking-tight">Powered by Squad</span>
+                </div>
+                <span className="text-xl font-bold">Digital Integrity Hub</span>
+                <span className="text-xl font-bold">SafeTrade NG</span>
+            </div>
+        </div>
+      </section>
+
+      {/* Features Bento Grid */}
+      <section className="py-24 px-4 md:px-12 max-w-7xl mx-auto">
+        <div className="text-center mb-16">
+          <h2 className="text-3xl md:text-4xl font-bold text-on-surface mb-4">Advanced Protection for Every Stakeholder</h2>
+          <p className="text-lg text-on-surface-variant max-w-2xl mx-auto">Our multi-layered AI approach ensures that every transaction is backed by data, not just promises.</p>
+        </div>
+        
+        <div className="grid grid-cols-1 md:grid-cols-12 gap-6">
+          {/* Main Card */}
+          <motion.div 
+            whileHover={{ y: -5 }}
+            className="md:col-span-8 bg-white p-8 md:p-12 rounded-3xl border border-on-surface/5 flex flex-col justify-between group overflow-hidden relative"
+          >
+            <div className="absolute top-0 right-0 w-64 h-64 bg-secondary/5 rounded-full translate-x-1/2 -translate-y-1/2 group-hover:scale-110 transition-transform duration-700" />
+            <div className="relative z-10">
+              <div className="w-14 h-14 bg-error-container/40 text-error rounded-2xl flex items-center justify-center mb-8">
+                <ShieldCheck size={32} />
+              </div>
+              <h3 className="text-2xl font-bold text-on-surface mb-4">99.9% Fraud Reduction</h3>
+              <p className="text-on-surface-variant max-w-md text-base leading-relaxed">
+                Our neural networks analyze over 50 data points per transaction to detect counterfeit products and fraudulent vendor patterns before you part with your capital.
+              </p>
+            </div>
+            <div className="mt-12 flex gap-2 relative z-10">
+              <span className="bg-error/10 text-error px-4 py-1 rounded-full text-xs font-bold">High Risk Flagged</span>
+              <span className="bg-on-tertiary-container/10 text-on-tertiary-container px-4 py-1 rounded-full text-xs font-bold">System Alert</span>
+            </div>
+          </motion.div>
+
+          {/* Side Card */}
+          <motion.div 
+            whileHover={{ y: -5 }}
+            className="md:col-span-4 bg-primary-container p-8 md:p-12 rounded-3xl flex flex-col justify-between text-white"
+          >
+            <div>
+              <div className="w-14 h-14 bg-white/10 text-white rounded-2xl flex items-center justify-center mb-8">
+                <Zap size={32} />
+              </div>
+              <h3 className="text-2xl font-bold mb-4">Squad API Native</h3>
+              <p className="text-on-primary-container text-sm leading-relaxed">
+                Seamlessly integrated with Squad's payment infrastructure for instant escrow and secure settlements.
+              </p>
+            </div>
+            <Link to="#" className="mt-8 inline-flex items-center gap-2 text-secondary-fixed text-sm font-bold group">
+                View Documentation
+                <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />
+            </Link>
+          </motion.div>
+
+          {/* Bottom Left */}
+          <motion.div 
+            whileHover={{ y: -5 }}
+            className="md:col-span-4 bg-surface-container-high p-8 md:p-12 rounded-3xl border border-on-surface/5"
+          >
+            <div className="w-14 h-14 bg-on-tertiary-container/10 text-on-tertiary-container rounded-2xl flex items-center justify-center mb-8">
+                <BarChart3 size={32} />
+            </div>
+            <h3 className="text-2xl font-bold text-on-surface mb-4">AI Trust Scores</h3>
+            <p className="text-on-surface-variant text-sm leading-relaxed">
+                Dynamic, real-time scoring system that updates vendor reliability based on historical performance and live feedback loops.
+            </p>
+          </motion.div>
+
+          {/* Bottom Right */}
+          <motion.div 
+            whileHover={{ y: -5 }}
+            className="md:col-span-8 bg-surface-container-low p-8 md:p-12 rounded-3xl border border-on-surface/5 flex flex-col md:flex-row gap-8 items-center"
+          >
+            <div className="w-full md:w-1/2">
+                <h3 className="text-2xl font-bold text-on-surface mb-4 font-sans">Built for the African Ecosystem</h3>
+                <p className="text-on-surface-variant text-sm leading-relaxed mb-6">
+                    Tailored risk models that understand local trade nuances, from Lagos wholesalers to regional distributors.
+                </p>
+                <button className="font-bold text-sm text-secondary border-b-2 border-secondary/30 hover:border-secondary transition-all">
+                    Learn about our models
+                </button>
+            </div>
+            <div className="w-full md:w-1/2 rounded-2xl overflow-hidden shadow-xl aspect-video">
+                <img 
+                    src="https://lh3.googleusercontent.com/aida-public/AB6AXuB_75Pf6lxCZzUmRZ8Lnhm3UNcAJ5Ui3zcl9NuHJpcAWBA9d3NG5b3aIgBwwoCXAYIOEa2DQuYhzlGz9ssLcA0sz0rKfpbvibbupmk__KoZzQ4z2ic0AOH-T8PgSwHYcTGXNaqmbGh035onzwKI3EZzANYR0qqBiPv4HpkYmz7L8nZGsAMpkoDaTVyxo1gjq_bmZwbO4Ojb6aMV2eBdVi-XO4YffD-HRfdb8Dk5N1i-diL1FXUGTiREW5HCwmEoxIJrvI0ngkhzuPA" 
+                    alt="African Hub" 
+                    className="w-full h-full object-cover"
+                />
+            </div>
+          </motion.div>
+        </div>
+      </section>
+
+      {/* CTA Section */}
+      <section className="py-24 px-4 md:px-12">
+        <div className="max-w-7xl mx-auto bg-secondary rounded-[40px] p-12 md:p-24 text-center relative overflow-hidden">
+          <div className="absolute inset-0 bg-gradient-to-br from-secondary/80 to-primary-container/80 mix-blend-overlay" />
+          <div className="relative z-10 max-w-3xl mx-auto space-y-12">
+            <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold text-on-secondary tracking-tight">Ready to Secure Your Next Shipment?</h2>
+            <p className="text-xl text-on-secondary/80 max-w-2xl mx-auto">Join thousands of vendors and retailers using TrustChain AI to eliminate transaction risk.</p>
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <motion.button 
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                className="bg-white text-secondary h-14 px-10 rounded-2xl font-bold shadow-xl transition-all"
+              >
+                Get Started Free
+              </motion.button>
+              <motion.button 
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                className="bg-secondary-container text-on-secondary-container h-14 px-10 rounded-2xl font-bold"
+              >
+                Talk to Sales
+              </motion.button>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+  );
+}
+
+
+
+####################################################################################################
+FILE: views\Result.tsx
+####################################################################################################
+
+import { useLocation, useNavigate } from "react-router-dom";
+import { ShieldCheck, AlertTriangle, ArrowLeft, CreditCard } from "lucide-react";
+import { useMemo, useState } from "react";
+import axios from "axios";
+
+const REPORT_STORAGE_KEY = "trustchain_latest_report";
+
+type Analysis = {
+  score: number;
+  level: string;
+  flags: string[];
+  verdict: string;
+};
+
+type Report = {
+  id: string;
+  verification_id: number;
+  payment_required?: boolean;
+  verification_fee?: number;
+  product?: {
+    name?: string;
+    batch_no?: string;
+    nafdac_no?: string;
+    price?: number;
+    ocr_text?: string;
+  };
+  vendor?: {
+    name?: string;
+  };
+  analysis: Analysis;
+};
+
+export default function Result() {
+  const location = useLocation();
+  const navigate = useNavigate();
+
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+
+  const report: Report | null = useMemo(() => {
+    const fromRoute = (location.state as { data?: Report } | null)?.data;
+    if (fromRoute) return fromRoute;
+
+    const stored = sessionStorage.getItem(REPORT_STORAGE_KEY);
+    if (!stored) return null;
+
+    try {
+      return JSON.parse(stored) as Report;
+    } catch {
+      return null;
+    }
+  }, [location.state]);
+
+  if (!report) {
+    return (
+      <div className="max-w-3xl mx-auto px-4 md:px-12 py-12">
+        <div className="bg-white rounded-3xl p-8 border border-on-surface/10 shadow-sm">
+          <p className="text-lg font-semibold text-on-surface mb-3">No verification data found.</p>
+          <p className="text-on-surface-variant">
+            Run a verification first to see the trust score and payment option.
+          </p>
+
+          <button
+            onClick={() => navigate("/verify")}
+            className="mt-6 px-4 py-2 bg-secondary text-white rounded-lg"
+          >
+            Go Back
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  const analysis = report.analysis;
+  const flags = Array.isArray(analysis.flags) ? analysis.flags : [];
+  const verificationFee = report.verification_fee ?? 1000;
+  const API_BASE_URL = import.meta.env.VITE_API_BASE_URL ?? "http://localhost:8000/api/v1";
+
+  const handlePayment = async () => {
+    try {
+      setLoading(true);
+      setError("");
+
+      const payload = {
+        email: "test@example.com",
+        amount: verificationFee,
+        verification_id: report.verification_id,
+      };
+
+      const response = await axios.post(`${API_BASE_URL}/payments/initiate`, payload);
+      const checkoutUrl = response.data?.data?.checkout_url ?? response.data?.data?.checkoutUrl;
+
+      if (checkoutUrl) {
+        window.location.href = checkoutUrl;
+      } else {
+        setError("Unable to initialize payment.");
+      }
+    } catch (err) {
+      console.error(err);
+      setError("Payment initiation failed.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <div className="max-w-4xl mx-auto px-4 md:px-12 py-12">
+      <button
+        onClick={() => navigate(-1)}
+        className="flex items-center gap-2 mb-8 text-sm font-semibold"
+      >
+        <ArrowLeft size={18} />
+        Back
+      </button>
+
+      <div className="bg-white rounded-3xl p-8 border border-on-surface/10 shadow-sm">
+        <div className="flex items-center gap-4 mb-8">
+          {analysis.level === "HIGH" ? (
+            <AlertTriangle className="text-error" size={40} />
+          ) : (
+            <ShieldCheck className="text-on-tertiary-container" size={40} />
+          )}
+
+          <div>
+            <h1 className="text-3xl font-bold">Trust Score: {analysis.score}%</h1>
+            <p className="text-on-surface-variant">{analysis.verdict}</p>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+          <div className="p-4 rounded-xl bg-surface-container-low">
+            <p className="text-xs uppercase tracking-widest text-on-surface-variant mb-1">Product</p>
+            <p className="font-semibold text-on-surface">{report.product?.name ?? "N/A"}</p>
+          </div>
+
+          <div className="p-4 rounded-xl bg-surface-container-low">
+            <p className="text-xs uppercase tracking-widest text-on-surface-variant mb-1">Price</p>
+            <p className="font-semibold text-on-surface">₦{report.product?.price ?? 0}</p>
+          </div>
+
+          <div className="p-4 rounded-xl bg-surface-container-low">
+            <p className="text-xs uppercase tracking-widest text-on-surface-variant mb-1">Verification</p>
+            <p className="font-semibold text-on-surface">
+              {report.payment_required === false ? "Not required" : "Required"}
+            </p>
+          </div>
+        </div>
+
+        <div className="mb-8">
+          <h2 className="text-xl font-bold mb-4">Risk Flags</h2>
+
+          <div className="space-y-3">
+            {flags.length > 0 ? (
+              flags.map((flag, idx) => (
+                <div key={idx} className="p-4 rounded-xl bg-surface-container-low">
+                  {flag}
+                </div>
+              ))
+            ) : (
+              <div className="p-4 rounded-xl bg-surface-container-low text-on-surface-variant">
+                No risk flags detected.
+              </div>
+            )}
+          </div>
+        </div>
+
+        {error && <div className="mb-4 text-error text-sm font-medium">{error}</div>}
+
+        {report.payment_required !== false && (
+          <button
+            onClick={handlePayment}
+            disabled={loading}
+            className="bg-secondary text-white px-8 py-4 rounded-xl font-bold inline-flex items-center gap-2 disabled:opacity-60"
+          >
+            <CreditCard size={18} />
+            {loading ? "Processing..." : `Pay ₦${verificationFee}`}
+          </button>
+        )}
+      </div>
+    </div>
+  );
+}
+
+
+####################################################################################################
+FILE: views\Verify.tsx
+####################################################################################################
+
+import { useState, FormEvent, ChangeEvent } from "react";
+import { Camera, Package, ShieldCheck, Sparkles, Tag } from "lucide-react";
+import { motion } from "framer-motion";
+import { useNavigate } from "react-router-dom";
+import { runVerification } from "../api/client";
+
+const REPORT_STORAGE_KEY = "trustchain_latest_report";
+
+export default function Verify() {
+  const navigate = useNavigate();
+  const [loading, setLoading] = useState(false);
+  const [image, setImage] = useState<File | null>(null);
+  const [productData, setProductData] = useState({
+    name: "",
+    batch: "",
+    nafdac: "",
+    vendor: "",
+    price: "",
+  });
+
+  const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
+    setProductData({ ...productData, [e.target.name]: e.target.value });
+  };
+
+  const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      setImage(e.target.files[0]);
+    }
+  };
+
+  const handleSubmit = async (e: FormEvent) => {
+    e.preventDefault();
+
+    if (!image) {
+      alert("Please upload a product image first.");
+      return;
+    }
+
+    if (!productData.price || Number.isNaN(Number(productData.price))) {
+      alert("Please enter a valid product price.");
+      return;
+    }
+
+    setLoading(true);
+
+    const formData = new FormData();
+    formData.append("product_name", productData.name);
+    formData.append("batch_no", productData.batch);
+    formData.append("nafdac_no", productData.nafdac);
+    formData.append("price", productData.price);
+    formData.append("vendor_name", productData.vendor);
+    formData.append("image", image);
+
+    try {
+      const result = await runVerification(formData);
+
+      sessionStorage.setItem(REPORT_STORAGE_KEY, JSON.stringify(result));
+      navigate("/result", { state: { data: result } });
+    } catch (error) {
+      console.error("Verification failed", error);
+      alert("Verification failed. Please try again.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <div className="max-w-7xl mx-auto w-full px-4 md:px-12 py-12">
+      <div className="mb-12">
+        <h1 className="text-3xl font-bold text-on-surface mb-2">Forensic Intelligence</h1>
+        <p className="text-on-surface-variant">Enter the product details, then run verification.</p>
+      </div>
+
+      <form onSubmit={handleSubmit}>
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 mb-16">
+          <section className="glass-panel p-8 rounded-2xl border border-on-surface/10">
+            <div className="flex items-center gap-3 mb-10 text-on-surface">
+              <Package />
+              <h2 className="text-2xl font-bold">Product Registry</h2>
+            </div>
+
+            <div className="group border-2 border-dashed border-on-surface/10 rounded-2xl p-16 flex flex-col items-center justify-center bg-surface-container-low relative">
+              <input
+                type="file"
+                accept="image/png,image/jpeg"
+                onChange={handleFileChange}
+                className="absolute inset-0 opacity-0 cursor-pointer"
+              />
+              <Camera size={48} className="text-on-surface-variant mb-4" />
+              <p className="text-sm font-bold text-on-surface">
+                {image ? image.name : "Upload Product Image"}
+              </p>
+            </div>
+
+            <div className="mt-8 space-y-6">
+              <input
+                name="name"
+                onChange={handleInputChange}
+                value={productData.name}
+                placeholder="Product Name"
+                className="w-full h-12 px-4 rounded-xl border border-on-surface/10 bg-white outline-none"
+              />
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <input
+                  name="batch"
+                  onChange={handleInputChange}
+                  value={productData.batch}
+                  placeholder="Batch No"
+                  className="w-full h-12 px-4 rounded-xl border border-on-surface/10 bg-white outline-none"
+                />
+                <input
+                  name="nafdac"
+                  onChange={handleInputChange}
+                  value={productData.nafdac}
+                  placeholder="NAFDAC No"
+                  className="w-full h-12 px-4 rounded-xl border border-on-surface/10 bg-white outline-none"
+                />
+              </div>
+
+              <div className="relative">
+                <Tag
+                  size={16}
+                  className="absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant pointer-events-none"
+                />
+                <input
+                  name="price"
+                  type="number"
+                  min="0"
+                  onChange={handleInputChange}
+                  value={productData.price}
+                  placeholder="Product Price (₦)"
+                  className="w-full h-12 pl-10 pr-4 rounded-xl border border-on-surface/10 bg-white outline-none"
+                />
+              </div>
+            </div>
+          </section>
+
+          <section className="glass-panel p-8 rounded-2xl border border-on-surface/10">
+            <div className="flex items-center gap-3 mb-10 text-secondary">
+              <ShieldCheck />
+              <h2 className="text-2xl font-bold text-on-surface">Vendor Intelligence</h2>
+            </div>
+
+            <input
+              name="vendor"
+              onChange={handleInputChange}
+              value={productData.vendor}
+              placeholder="Vendor/Business Name"
+              className="w-full h-12 px-4 rounded-xl border border-on-surface/10 bg-white outline-none"
+            />
+          </section>
+        </div>
+
+        <div className="flex flex-col items-center gap-6">
+          <motion.button
+            type="submit"
+            whileTap={{ scale: 0.97 }}
+            disabled={loading}
+            className="bg-on-tertiary-container text-white px-12 h-14 rounded-xl font-bold flex items-center gap-3 shadow-xl disabled:opacity-60"
+          >
+            <Sparkles size={20} />
+            {loading ? "Analyzing Neural Data..." : "Run AI Verification"}
+          </motion.button>
+        </div>
+      </form>
+    </div>
+  );
+}
+
+
+====================================================================================================
+SOURCE ROOT:
+C:\Users\HP\Downloads\the-full-app-trust-ai-main (1)\the-full-app-trust-ai-main\trustchain backend\trustchain-backend\app
+====================================================================================================
+
+
+####################################################################################################
+FILE: combined_backend_code.txt
+####################################################################################################
+
+===== DIRECTORY STRUCTURE =====
+
+[app]
+    combined_backend_code.txt
+    database.py
+    main.py
+    models.py
+    __init__.py
+    [api]
+        payments.py
+        verify.py
+        __init__.py
+    [core]
+        config.py
+        nafdac_list.py
+        scoring.py
+        __init__.py
+    [services]
+        ocr.py
+        __init__.py
+
+
+===== FILE CONTENTS =====
+
+
+================================================================================
+FILE: combined_backend_code.txt
+================================================================================
+
+
+
+
+================================================================================
+FILE: database.py
+================================================================================
+
+from sqlalchemy import create_engine
+from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.orm import sessionmaker
+
+from app.core.config import settings
+
+if settings.DATABASE_URL.startswith("sqlite"):
+    engine = create_engine(
+        settings.DATABASE_URL,
+        connect_args={"check_same_thread": False},
+    )
+else:
+    engine = create_engine(settings.DATABASE_URL)
+
+SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+Base = declarative_base()
+
+
+def get_db():
+    db = SessionLocal()
+    try:
+        yield db
+    finally:
+        db.close()
+
+
+================================================================================
+FILE: main.py
+================================================================================
+
+import time
+
+from fastapi import FastAPI, Request
+from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import JSONResponse
+
+from app.api import payments, verify
+from app.core.config import settings
+from app.database import Base, engine
+
+Base.metadata.create_all(bind=engine)
+
+app = FastAPI(
+    title=settings.PROJECT_NAME,
+    description="Product & Vendor Verification Engine",
+    version=settings.VERSION,
+)
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+
+@app.middleware("http")
+async def add_process_time_header(request: Request, call_next):
+    start_time = time.time()
+    response = await call_next(request)
+    response.headers["X-Process-Time"] = str(time.time() - start_time)
+    return response
+
+
+@app.exception_handler(Exception)
+async def global_exception_handler(request: Request, exc: Exception):
+    return JSONResponse(
+        status_code=500,
+        content={
+            "error": "Internal Server Error",
+            "message": str(exc),
+            "path": request.url.path,
+        },
+    )
+
+
+app.include_router(verify.router, prefix="/api/v1/verify", tags=["Verification"])
+app.include_router(payments.router, prefix="/api/v1/payments", tags=["Payments"])
+
+
+@app.get("/", tags=["System"])
+async def health_check():
+    return {
+        "project": "TrustChain AI",
+        "status": "Operational",
+        "squad_gateway": "Active" if settings.SQUAD_SECRET_KEY else "Key Missing",
+        "timestamp": time.time(),
+    }
+
+
+if __name__ == "__main__":
+    import uvicorn
+
+    uvicorn.run("app.main:app", host="0.0.0.0", port=8000, reload=True)
+
+
+================================================================================
+FILE: models.py
+================================================================================
+
+from datetime import datetime
+
+from sqlalchemy import Boolean, Column, DateTime, Float, Integer, JSON, String
+
+from app.database import Base
+
+
+class Verification(Base):
+    __tablename__ = "verifications"
+
+    id = Column(Integer, primary_key=True, index=True)
+    timestamp = Column(DateTime, default=datetime.utcnow, nullable=False)
+
+    product_name = Column(String, index=True, nullable=False)
+    batch_no = Column(String, nullable=True)
+    nafdac_no = Column(String, nullable=True)
+    price = Column(Float, nullable=False)
+
+    vendor_name = Column(String, index=True, nullable=True)
+
+    ocr_text = Column(String, nullable=True)
+
+    score = Column(Integer, nullable=False)
+    level = Column(String, nullable=False)
+    flags = Column(JSON, default=list)
+    verdict = Column(String, nullable=False)
+
+    paid = Column(Boolean, default=False, nullable=False)
+    squad_transaction_ref = Column(String, nullable=True, index=True)
+
+
+================================================================================
+FILE: __init__.py
+================================================================================
+
+# TrustChain AI — App Package
+# Router registration is handled in app/main.py
+# Do NOT put app.include_router() calls here — `app` doesn't exist at this scope
+
+
+
+================================================================================
+FILE: api\payments.py
+================================================================================
+
+from typing import Any, Dict, Optional
+
+import httpx
+from fastapi import APIRouter, Depends, HTTPException, Request
+from pydantic import BaseModel
+from sqlalchemy.orm import Session
+
+from app.core.config import settings
+from app.database import get_db
+from app.models import Verification
+
+router = APIRouter()
+
+
+class PaymentRequest(BaseModel):
+    email: str
+    amount: int
+    verification_id: int
+
+
+@router.post("/initiate")
+async def initiate_payment(req: PaymentRequest):
+    if not settings.SQUAD_SECRET_KEY:
+        raise HTTPException(status_code=500, detail="Squad API key missing")
+
+    headers = {
+        "Authorization": f"Bearer {settings.SQUAD_SECRET_KEY}",
+        "Content-Type": "application/json",
+    }
+
+    payload = {
+        "amount": req.amount,
+        "email": req.email,
+        "currency": "NGN",
+        "initiate_type": "inline",
+        "metadata": {
+            "verification_id": req.verification_id
+        },
+    }
+
+    async with httpx.AsyncClient(timeout=30) as client:
+        response = await client.post(
+            f"{settings.SQUAD_BASE_URL}/transaction/initiate",
+            json=payload,
+            headers=headers,
+        )
+
+    if response.status_code not in (200, 201):
+        raise HTTPException(status_code=response.status_code, detail=response.text)
+
+    return response.json()
+
+
+@router.post("/webhook")
+async def squad_webhook(request: Request, db: Session = Depends(get_db)):
+    payload: Dict[str, Any] = await request.json()
+
+    event = payload.get("Event") or payload.get("event")
+    body = payload.get("Body") or payload.get("body") or payload.get("data") or {}
+    meta = body.get("meta") or body.get("metadata") or {}
+
+    verification_id: Optional[int] = None
+    raw_verification_id = meta.get("verification_id")
+
+    if raw_verification_id is not None:
+        try:
+            verification_id = int(raw_verification_id)
+        except Exception:
+            verification_id = None
+
+    transaction_status = (
+        body.get("transaction_status")
+        or body.get("status")
+        or payload.get("status")
+    )
+
+    transaction_ref = (
+        body.get("transaction_ref")
+        or body.get("reference")
+        or body.get("transaction_reference")
+        or payload.get("reference")
+    )
+
+    if event == "charge_successful" or str(transaction_status).lower() in {"success", "successful", "paid"}:
+        if verification_id:
+            verification = db.query(Verification).get(verification_id)
+            if verification:
+                verification.paid = True
+                if transaction_ref:
+                    verification.squad_transaction_ref = str(transaction_ref)
+                db.commit()
+
+    return {"received": True}
+
+
+================================================================================
+FILE: api\verify.py
+================================================================================
+
+from __future__ import annotations
+
+import os
+import tempfile
+
+from fastapi import APIRouter, Depends, File, Form, HTTPException, UploadFile
+from sqlalchemy.orm import Session
+
+from app.core.config import settings
+from app.core.scoring import calculate_trust_score
+from app.database import get_db
+from app.models import Verification
+from app.services.ocr import extract_label_text
+
+router = APIRouter()
+
+
+@router.post("/run")
+async def run_verification(
+    product_name: str = Form(...),
+    batch_no: str = Form(""),
+    nafdac_no: str = Form(""),
+    price: float = Form(...),
+    vendor_name: str = Form(""),
+    image: UploadFile = File(...),
+    db: Session = Depends(get_db),
+):
+    if image.content_type not in settings.ALLOWED_CONTENT_TYPES:
+        raise HTTPException(status_code=400, detail="Only JPG and PNG images are allowed.")
+
+    contents = await image.read()
+
+    if len(contents) > settings.MAX_UPLOAD_SIZE:
+        raise HTTPException(status_code=400, detail="Image file is too large. Maximum size is 5MB.")
+
+    suffix = os.path.splitext(image.filename or "")[1] or ".png"
+    temp_path = None
+
+    try:
+        with tempfile.NamedTemporaryFile(delete=False, suffix=suffix) as temp_file:
+            temp_file.write(contents)
+            temp_path = temp_file.name
+
+        ocr_text = extract_label_text(temp_path)
+
+        product_data = {
+            "product_name": product_name,
+            "batch_no": batch_no,
+            "nafdac_no": nafdac_no,
+            "price": price,
+            "market_avg": settings.MARKET_AVG,
+            "ocr_text": ocr_text,
+            "expiry_status": "active",
+        }
+
+        vendor_data = {
+            "vendor_name": vendor_name,
+            "years_in_business": 2,
+            "complaint_count": 0,
+            "is_cac_registered": True,
+        }
+
+        analysis = calculate_trust_score(product_data, vendor_data)
+
+        if settings.FEE_MODE == "product_price":
+            verification_fee = int(price * 100)
+        else:
+            verification_fee = int(settings.VERIFICATION_FEE * 100)
+
+        verification = Verification(
+            product_name=product_name,
+            batch_no=batch_no,
+            nafdac_no=nafdac_no,
+            price=price,
+            vendor_name=vendor_name,
+            ocr_text=ocr_text,
+            score=analysis.score,
+            level=analysis.level,
+            flags=analysis.flags,
+            verdict=analysis.verdict,
+            paid=False,
+        )
+
+        db.add(verification)
+        db.commit()
+        db.refresh(verification)
+
+        return {
+            "id": f"TRC-{verification.id}",
+            "verification_id": verification.id,
+            "payment_required": True,
+            "verification_fee": verification_fee,
+            "product": {
+                "name": product_name,
+                "batch_no": batch_no,
+                "nafdac_no": nafdac_no,
+                "price": price,
+                "ocr_text": ocr_text,
+            },
+            "vendor": {
+                "name": vendor_name,
+            },
+            "analysis": analysis.model_dump(),
+        }
+
+    finally:
+        if temp_path and os.path.exists(temp_path):
+            try:
+                os.remove(temp_path)
+            except OSError:
+                pass
+
+
+================================================================================
+FILE: api\__init__.py
+================================================================================
+
+from .payments import router as payments_router
+from .verify import router as verify_router
+
+__all__ = ["payments_router", "verify_router"]
+
+
+================================================================================
+FILE: core\config.py
+================================================================================
+
+from typing import List, Optional
+
+from pydantic_settings import BaseSettings
+
+
+class Settings(BaseSettings):
+    PROJECT_NAME: str = "TrustChain AI"
+    VERSION: str = "1.0.0"
+    APP_ENV: str = "development"
+
+    DATABASE_URL: str = "sqlite:///./trustchain.db"
+
+    SQUAD_SECRET_KEY: Optional[str] = None
+    SQUAD_WEBHOOK_SECRET: Optional[str] = None
+    SQUAD_BASE_URL: str = "https://sandbox-api-d.squadco.com"
+
+    MAX_UPLOAD_SIZE: int = 5 * 1024 * 1024
+    ALLOWED_CONTENT_TYPES: List[str] = ["image/jpeg", "image/png"]
+
+    VERIFICATION_FEE: int = 1000
+    FEE_MODE: str = "fixed"  # fixed | product_price
+
+    MARKET_AVG: int = 5000
+    PRICE_THRESHOLD: float = 0.6
+
+    class Config:
+        env_file = ".env"
+        case_sensitive = True
+
+
+settings = Settings()
+
+
+================================================================================
+FILE: core\nafdac_list.py
+================================================================================
+
+import json
+from pathlib import Path
+
+NAFDAC_FILE = Path(__file__).resolve().parents[2] / "nafdac_products.json"
+
+VALID_NAFDAC = set()
+
+if NAFDAC_FILE.exists():
+    try:
+        with NAFDAC_FILE.open("r", encoding="utf-8") as f:
+            data = json.load(f)
+
+        if isinstance(data, list):
+            for item in data:
+                if isinstance(item, dict):
+                    code = str(item.get("nafdac_no", "")).strip().upper()
+                    if code:
+                        VALID_NAFDAC.add(code)
+                elif isinstance(item, str):
+                    code = item.strip().upper()
+                    if code:
+                        VALID_NAFDAC.add(code)
+    except Exception:
+        VALID_NAFDAC = set()
+
+
+================================================================================
+FILE: core\scoring.py
+================================================================================
+
+import json
+import re
+from dataclasses import dataclass
+from pathlib import Path
+from typing import Dict, List, Optional
+
+from app.core.config import settings
+
+
+# =========================================================
+# LOAD NAFDAC DATABASE
+# =========================================================
+
+# safer relative-path approach
+NAFDAC_FILE_PATH = (
+    Path(__file__).resolve().parents[2] / "nafdac_products.json"
+)
+
+
+def load_nafdac_db() -> set:
+    """
+    Loads approved NAFDAC numbers from JSON database.
+
+    Supported formats:
+    1. ["A4-1001", "B2-2020"]
+    2. [{"nafdac_no": "A4-1001"}]
+    3. {"A4-1001": {...}}
+    """
+
+    try:
+        if not NAFDAC_FILE_PATH.exists():
+            print("[NAFDAC] Database file not found.")
+            return set()
+
+        with open(NAFDAC_FILE_PATH, "r", encoding="utf-8") as f:
+            data = json.load(f)
+
+        results = set()
+
+        # -------------------------------------------------
+        # FORMAT 1: LIST
+        # -------------------------------------------------
+        if isinstance(data, list):
+
+            for item in data:
+
+                # list[str]
+                if isinstance(item, str):
+                    code = item.strip().upper()
+
+                    if code:
+                        results.add(code)
+
+                # list[dict]
+                elif isinstance(item, dict):
+                    code = str(
+                        item.get("nafdac_no", "")
+                    ).strip().upper()
+
+                    if code:
+                        results.add(code)
+
+        # -------------------------------------------------
+        # FORMAT 2: DICT
+        # -------------------------------------------------
+        elif isinstance(data, dict):
+
+            for key in data.keys():
+                code = str(key).strip().upper()
+
+                if code:
+                    results.add(code)
+
+        print(f"[NAFDAC] Loaded {len(results)} records.")
+
+        return results
+
+    except Exception as e:
+        print(f"[NAFDAC LOAD ERROR] {e}")
+        return set()
+
+
+VALID_NAFDAC = load_nafdac_db()
+
+
+# =========================================================
+# DATA MODELS
+# =========================================================
+
+@dataclass
+class ProductInput:
+    name: str
+    price: float
+    nafdac_no: Optional[str] = None
+    ocr_text: Optional[str] = None
+    market_avg: Optional[float] = None
+    expiry_status: Optional[str] = None
+
+
+@dataclass
+class VendorInfo:
+    years_in_business: int = 0
+    complaint_count: int = 0
+    is_cac_registered: bool = False
+
+
+@dataclass
+class TrustResult:
+    score: float
+    level: str
+    verdict: str
+    flags: List[str]
+
+
+# =========================================================
+# HELPERS
+# =========================================================
+
+def normalize(text: str) -> str:
+    return str(text).lower().strip()
+
+
+def is_valid_nafdac(nafdac_no: Optional[str]) -> bool:
+    """
+    NAFDAC validation strategy:
+    1. Database lookup
+    2. Regex fallback
+    """
+
+    if not nafdac_no:
+        return False
+
+    normalized = str(nafdac_no).strip().upper()
+
+    # -----------------------------------------------------
+    # STRONGEST VALIDATION:
+    # DATABASE MATCH
+    # -----------------------------------------------------
+    if normalized in VALID_NAFDAC:
+        return True
+
+    # -----------------------------------------------------
+    # FALLBACK STRUCTURE VALIDATION
+    # -----------------------------------------------------
+    pattern = re.compile(r"^[A-Z0-9]{2,}[-/][A-Z0-9]+$")
+
+    return bool(pattern.match(normalized))
+
+
+# =========================================================
+# CORE TRUST ENGINE
+# =========================================================
+
+def calculate_trust_score(
+    product: Dict,
+    vendor: Dict
+) -> TrustResult:
+
+    score = 100.0
+    flags: List[str] = []
+
+    # =====================================================
+    # NORMALIZE INPUTS
+    # =====================================================
+
+    product_obj = ProductInput(
+        name=str(product.get("product_name", "")),
+        price=float(product.get("price", 0)),
+        nafdac_no=product.get("nafdac_no"),
+        ocr_text=product.get("ocr_text"),
+        market_avg=product.get("market_avg"),
+        expiry_status=product.get("expiry_status"),
+    )
+
+    vendor_obj = VendorInfo(
+        years_in_business=int(
+            vendor.get("years_in_business", 0)
+        ),
+        complaint_count=int(
+            vendor.get("complaint_count", 0)
+        ),
+        is_cac_registered=bool(
+            vendor.get("is_cac_registered", False)
+        ),
+    )
+
+    # =====================================================
+    # 1. NAFDAC VALIDATION
+    # =====================================================
+
+    if not is_valid_nafdac(product_obj.nafdac_no):
+        score -= 35
+        flags.append(
+            "Invalid or unverified NAFDAC registration"
+        )
+
+    # =====================================================
+    # 2. PRICE ANOMALY DETECTION
+    # =====================================================
+
+    market_avg = (
+        product_obj.market_avg
+        or getattr(settings, "MARKET_AVG", 0)
+    )
+
+    if market_avg > 0:
+
+        # suspiciously cheap
+        if product_obj.price < market_avg * 0.6:
+            score -= 20
+            flags.append(
+                "Price significantly below market average"
+            )
+
+        # suspiciously expensive
+        elif product_obj.price > market_avg * 1.8:
+            score -= 10
+            flags.append(
+                "Price unusually high"
+            )
+
+    # =====================================================
+    # 3. EXPIRY ANALYSIS
+    # =====================================================
+
+    if product_obj.expiry_status == "expired":
+        score -= 40
+        flags.append("Product is expired")
+
+    # =====================================================
+    # 4. VENDOR TRUST ANALYSIS
+    # =====================================================
+
+    if vendor_obj.years_in_business < 1:
+        score -= 15
+        flags.append(
+            "Vendor has less than 1 year of history"
+        )
+
+    if vendor_obj.complaint_count > 2:
+        score -= 25
+        flags.append(
+            "Multiple unresolved complaints"
+        )
+
+    if not vendor_obj.is_cac_registered:
+        score -= 20
+        flags.append(
+            "Vendor not CAC registered"
+        )
+
+    # =====================================================
+    # 5. OCR LABEL INTEGRITY
+    # =====================================================
+
+    if product_obj.ocr_text:
+
+        product_name_normalized = normalize(
+            product_obj.name
+        )
+
+        ocr_normalized = normalize(
+            product_obj.ocr_text
+        )
+
+        if product_name_normalized not in ocr_normalized:
+            score -= 10
+            flags.append(
+                "Product label mismatch detected (OCR)"
+            )
+
+    # =====================================================
+    # FINAL SCORE NORMALIZATION
+    # =====================================================
+
+    score = max(0, min(100, score))
+
+    # =====================================================
+    # RISK CLASSIFICATION
+    # =====================================================
+
+    if score >= 80:
+        level = "LOW"
+        verdict = "Likely Genuine"
+
+    elif score >= 60:
+        level = "MEDIUM"
+        verdict = "Proceed with Caution"
+
+    else:
+        level = "HIGH"
+        verdict = "High Risk / Possible Fraud"
+
+    # =====================================================
+    # RETURN RESULT
+    # =====================================================
+
+    return TrustResult(
+        score=round(score, 2),
+        level=level,
+        verdict=verdict,
+        flags=flags,
+    )
+
+
+================================================================================
+FILE: core\__init__.py
+================================================================================
+
+from .config import settings
+from .scoring import calculate_trust_score
+
+__all__ = ["settings", "calculate_trust_score"]
+
+
+================================================================================
+FILE: services\ocr.py
+================================================================================
+
+import pytesseract
+from PIL import Image, ImageFilter, ImageOps
+
+
+def extract_label_text(image_path: str) -> str:
+    """
+    Perform OCR on the given image with simple preprocessing.
+    Returns uppercase text.
+    """
+    try:
+        img = Image.open(image_path)
+        img = ImageOps.exif_transpose(img)
+        img = img.convert("L")
+        img = img.filter(ImageFilter.SHARPEN)
+
+        text = pytesseract.image_to_string(img, config="--psm 6")
+        return text.upper().strip()
+    except Exception as e:
+        print(f"OCR error: {e}")
+        return ""
+
+
+================================================================================
+FILE: services\__init__.py
+================================================================================
+
+from .ocr import extract_label_text
+
+__all__ = ["extract_label_text"]
+
+
+
+
+####################################################################################################
+FILE: database.py
+####################################################################################################
+
+from sqlalchemy import create_engine
+from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.orm import sessionmaker
+
+from app.core.config import settings
+
+if settings.DATABASE_URL.startswith("sqlite"):
+    engine = create_engine(
+        settings.DATABASE_URL,
+        connect_args={"check_same_thread": False},
+    )
+else:
+    engine = create_engine(settings.DATABASE_URL)
+
+SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+Base = declarative_base()
+
+
+def get_db():
+    db = SessionLocal()
+    try:
+        yield db
+    finally:
+        db.close()
+
+
+####################################################################################################
+FILE: main.py
+####################################################################################################
+
+import time
+
+from fastapi import FastAPI, Request
+from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import JSONResponse
+
+from app.api import payments, verify
+from app.core.config import settings
+from app.database import Base, engine
+
+Base.metadata.create_all(bind=engine)
+
+app = FastAPI(
+    title=settings.PROJECT_NAME,
+    description="Product & Vendor Verification Engine",
+    version=settings.VERSION,
+)
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+
+@app.middleware("http")
+async def add_process_time_header(request: Request, call_next):
+    start_time = time.time()
+    response = await call_next(request)
+    response.headers["X-Process-Time"] = str(time.time() - start_time)
+    return response
+
+
+@app.exception_handler(Exception)
+async def global_exception_handler(request: Request, exc: Exception):
+    return JSONResponse(
+        status_code=500,
+        content={
+            "error": "Internal Server Error",
+            "message": str(exc),
+            "path": request.url.path,
+        },
+    )
+
+
+app.include_router(verify.router, prefix="/api/v1/verify", tags=["Verification"])
+app.include_router(payments.router, prefix="/api/v1/payments", tags=["Payments"])
+
+
+@app.get("/", tags=["System"])
+async def health_check():
+    return {
+        "project": "TrustChain AI",
+        "status": "Operational",
+        "squad_gateway": "Active" if settings.SQUAD_SECRET_KEY else "Key Missing",
+        "timestamp": time.time(),
+    }
+
+
+if __name__ == "__main__":
+    import uvicorn
+
+    uvicorn.run("app.main:app", host="0.0.0.0", port=8000, reload=True)
+
+
+####################################################################################################
+FILE: models.py
+####################################################################################################
+
+from datetime import datetime
+
+from sqlalchemy import Boolean, Column, DateTime, Float, Integer, JSON, String
+
+from app.database import Base
+
+
+class Verification(Base):
+    __tablename__ = "verifications"
+
+    id = Column(Integer, primary_key=True, index=True)
+    timestamp = Column(DateTime, default=datetime.utcnow, nullable=False)
+
+    product_name = Column(String, index=True, nullable=False)
+    batch_no = Column(String, nullable=True)
+    nafdac_no = Column(String, nullable=True)
+    price = Column(Float, nullable=False)
+
+    vendor_name = Column(String, index=True, nullable=True)
+
+    ocr_text = Column(String, nullable=True)
+
+    score = Column(Integer, nullable=False)
+    level = Column(String, nullable=False)
+    flags = Column(JSON, default=list)
+    verdict = Column(String, nullable=False)
+
+    paid = Column(Boolean, default=False, nullable=False)
+    squad_transaction_ref = Column(String, nullable=True, index=True)
+
+
+####################################################################################################
+FILE: __init__.py
+####################################################################################################
+
+# TrustChain AI — App Package
+# Router registration is handled in app/main.py
+# Do NOT put app.include_router() calls here — `app` doesn't exist at this scope
+
+
+
+####################################################################################################
+FILE: api\payments.py
+####################################################################################################
+
+from typing import Any, Dict, Optional
+
+import httpx
+from fastapi import APIRouter, Depends, HTTPException, Request
+from pydantic import BaseModel
+from sqlalchemy.orm import Session
+
+from app.core.config import settings
+from app.database import get_db
+from app.models import Verification
+
+router = APIRouter()
+
+
+class PaymentRequest(BaseModel):
+    email: str
+    amount: int
+    verification_id: int
+
+
+@router.post("/initiate")
+async def initiate_payment(req: PaymentRequest):
+    if not settings.SQUAD_SECRET_KEY:
+        raise HTTPException(status_code=500, detail="Squad API key missing")
+
+    headers = {
+        "Authorization": f"Bearer {settings.SQUAD_SECRET_KEY}",
+        "Content-Type": "application/json",
+    }
+
+    payload = {
+        "amount": req.amount,
+        "email": req.email,
+        "currency": "NGN",
+        "initiate_type": "inline",
+        "metadata": {
+            "verification_id": req.verification_id
+        },
+    }
+
+    async with httpx.AsyncClient(timeout=30) as client:
+        response = await client.post(
+            f"{settings.SQUAD_BASE_URL}/transaction/initiate",
+            json=payload,
+            headers=headers,
+        )
+
+    if response.status_code not in (200, 201):
+        raise HTTPException(status_code=response.status_code, detail=response.text)
+
+    return response.json()
+
+
+@router.post("/webhook")
+async def squad_webhook(request: Request, db: Session = Depends(get_db)):
+    payload: Dict[str, Any] = await request.json()
+
+    event = payload.get("Event") or payload.get("event")
+    body = payload.get("Body") or payload.get("body") or payload.get("data") or {}
+    meta = body.get("meta") or body.get("metadata") or {}
+
+    verification_id: Optional[int] = None
+    raw_verification_id = meta.get("verification_id")
+
+    if raw_verification_id is not None:
+        try:
+            verification_id = int(raw_verification_id)
+        except Exception:
+            verification_id = None
+
+    transaction_status = (
+        body.get("transaction_status")
+        or body.get("status")
+        or payload.get("status")
+    )
+
+    transaction_ref = (
+        body.get("transaction_ref")
+        or body.get("reference")
+        or body.get("transaction_reference")
+        or payload.get("reference")
+    )
+
+    if event == "charge_successful" or str(transaction_status).lower() in {"success", "successful", "paid"}:
+        if verification_id:
+            verification = db.query(Verification).get(verification_id)
+            if verification:
+                verification.paid = True
+                if transaction_ref:
+                    verification.squad_transaction_ref = str(transaction_ref)
+                db.commit()
+
+    return {"received": True}
+
+
+####################################################################################################
+FILE: api\verify.py
+####################################################################################################
+
+from __future__ import annotations
+
+import os
+import tempfile
+from dataclasses import asdict
+
+from fastapi import (
+    APIRouter,
+    Depends,
+    File,
+    Form,
+    HTTPException,
+    UploadFile,
+)
+from sqlalchemy.orm import Session
+
+from app.core.config import settings
+from app.core.scoring import calculate_trust_score
+from app.database import get_db
+from app.models import Verification
+from app.services.ocr import extract_label_text
+
+
+router = APIRouter()
+
+
+@router.post("/run")
+async def run_verification(
+    product_name: str = Form(...),
+    batch_no: str = Form(""),
+    nafdac_no: str = Form(""),
+    price: float = Form(...),
+    vendor_name: str = Form(""),
+    image: UploadFile = File(...),
+    db: Session = Depends(get_db),
+):
+
+    # =====================================================
+    # VALIDATION
+    # =====================================================
+
+    if price <= 0:
+        raise HTTPException(
+            status_code=400,
+            detail="Price must be greater than zero.",
+        )
+
+    if image.content_type not in settings.ALLOWED_CONTENT_TYPES:
+        raise HTTPException(
+            status_code=400,
+            detail="Only JPG and PNG images are allowed.",
+        )
+
+    contents = await image.read()
+
+    if len(contents) > settings.MAX_UPLOAD_SIZE:
+        raise HTTPException(
+            status_code=400,
+            detail="Image exceeds 5MB upload limit.",
+        )
+
+    suffix = os.path.splitext(
+        image.filename or ""
+    )[1] or ".png"
+
+    temp_path = None
+
+    try:
+
+        # =================================================
+        # SAVE TEMP FILE
+        # =================================================
+
+        with tempfile.NamedTemporaryFile(
+            delete=False,
+            suffix=suffix,
+        ) as temp_file:
+
+            temp_file.write(contents)
+            temp_path = temp_file.name
+
+        # =================================================
+        # OCR EXTRACTION
+        # =================================================
+
+        ocr_text = extract_label_text(temp_path)
+
+        # =================================================
+        # PRODUCT DATA
+        # =================================================
+
+        product_data = {
+            "product_name": product_name,
+            "batch_no": batch_no,
+            "nafdac_no": nafdac_no,
+            "price": price,
+            "market_avg": settings.MARKET_AVG,
+            "ocr_text": ocr_text,
+            "expiry_status": "active",
+        }
+
+        # =================================================
+        # VENDOR DATA
+        # =================================================
+
+        vendor_data = {
+            "vendor_name": vendor_name,
+            "years_in_business": 2,
+            "complaint_count": 0,
+            "is_cac_registered": True,
+        }
+
+        # =================================================
+        # TRUST ANALYSIS
+        # =================================================
+
+        analysis = calculate_trust_score(
+            product_data,
+            vendor_data,
+        )
+
+        # =================================================
+        # PAYMENT CONTROL LOGIC
+        # =================================================
+
+        payment_allowed = analysis.score >= 60
+
+        payment_status = (
+            "allowed"
+            if payment_allowed
+            else "paused"
+        )
+
+        # =================================================
+        # PAYMENT AMOUNT
+        # =================================================
+
+        payment_amount = int(price)
+
+        # Squad uses kobo
+        payment_amount_kobo = payment_amount * 100
+
+        # =================================================
+        # SAVE VERIFICATION
+        # =================================================
+
+        verification = Verification(
+            product_name=product_name,
+            batch_no=batch_no,
+            nafdac_no=nafdac_no,
+            price=price,
+            vendor_name=vendor_name,
+            ocr_text=ocr_text,
+            score=analysis.score,
+            level=analysis.level,
+            flags=analysis.flags,
+            verdict=analysis.verdict,
+            paid=False,
+        )
+
+        db.add(verification)
+        db.commit()
+        db.refresh(verification)
+
+        # =================================================
+        # RESPONSE
+        # =================================================
+
+        return {
+            "id": f"TRC-{verification.id}",
+            "verification_id": verification.id,
+
+            # =================================================
+            # PAYMENT DECISION
+            # =================================================
+
+            "payment_allowed": payment_allowed,
+            "payment_status": payment_status,
+
+            # =================================================
+            # ACTUAL PRODUCT PAYMENT
+            # =================================================
+
+            "payment_amount": payment_amount,
+            "payment_amount_kobo": payment_amount_kobo,
+            "currency": "NGN",
+
+            # =================================================
+            # PRODUCT
+            # =================================================
+
+            "product": {
+                "name": product_name,
+                "batch_no": batch_no,
+                "nafdac_no": nafdac_no,
+                "price": price,
+                "ocr_text": ocr_text,
+            },
+
+            # =================================================
+            # VENDOR
+            # =================================================
+
+            "vendor": {
+                "name": vendor_name,
+            },
+
+            # =================================================
+            # ANALYSIS
+            # =================================================
+
+            "analysis": (
+                analysis.model_dump()
+                if hasattr(analysis, "model_dump")
+                else asdict(analysis)
+            ),
+        }
+
+    finally:
+
+        # =================================================
+        # CLEAN TEMP FILE
+        # =================================================
+
+        if temp_path and os.path.exists(temp_path):
+
+            try:
+                os.remove(temp_path)
+
+            except OSError:
+                pass
+
+
+####################################################################################################
+FILE: api\__init__.py
+####################################################################################################
+
+from .payments import router as payments_router
+from .verify import router as verify_router
+
+__all__ = ["payments_router", "verify_router"]
+
+
+####################################################################################################
+FILE: core\config.py
+####################################################################################################
+
+from typing import Optional
+
+from pydantic import Field
+from pydantic_settings import BaseSettings, SettingsConfigDict
+
+
+class Settings(BaseSettings):
+    PROJECT_NAME: str = "TrustChain AI"
+    VERSION: str = "1.0.0"
+    APP_ENV: str = "development"
+
+    DATABASE_URL: str = "sqlite:///./trustchain.db"
+
+    SQUAD_SECRET_KEY: Optional[str] = None
+    SQUAD_WEBHOOK_SECRET: Optional[str] = None
+    SQUAD_BASE_URL: str = "https://sandbox-api-d.squadco.com"
+
+    MAX_UPLOAD_SIZE: int = 5 * 1024 * 1024
+
+    ALLOWED_CONTENT_TYPES: list[str] = Field(
+        default_factory=lambda: [
+            "image/jpeg",
+            "image/png",
+        ]
+    )
+
+    # =====================================================
+    # TRUST SCORING CONFIG
+    # =====================================================
+
+    MARKET_AVG: int = 5000
+    PRICE_THRESHOLD: float = 0.6
+
+    model_config = SettingsConfigDict(
+        env_file=".env",
+        case_sensitive=True,
+    )
+
+
+settings = Settings()
+
+
+####################################################################################################
+FILE: core\nafdac_list.py
+####################################################################################################
+
+import json
+from pathlib import Path
+
+NAFDAC_FILE = Path(__file__).resolve().parents[2] / "nafdac_products.json"
+
+VALID_NAFDAC = set()
+
+if NAFDAC_FILE.exists():
+    try:
+        with NAFDAC_FILE.open("r", encoding="utf-8") as f:
+            data = json.load(f)
+
+        if isinstance(data, list):
+            for item in data:
+                if isinstance(item, dict):
+                    code = str(item.get("nafdac_no", "")).strip().upper()
+                    if code:
+                        VALID_NAFDAC.add(code)
+                elif isinstance(item, str):
+                    code = item.strip().upper()
+                    if code:
+                        VALID_NAFDAC.add(code)
+    except Exception:
+        VALID_NAFDAC = set()
+
+
+####################################################################################################
+FILE: core\scoring.py
+####################################################################################################
+
+import re
+from typing import Dict, List
+
+from pydantic import BaseModel
+
+from app.core.config import settings
+
+
+# =========================================================
+# NAFDAC VALIDATION
+# =========================================================
+
+def is_valid_nafdac(nafdac_no: str) -> bool:
+    if not nafdac_no:
+        return False
+
+    normalized = nafdac_no.strip().upper()
+
+    try:
+        from app.core.nafdac_list import VALID_NAFDAC
+
+        if normalized in VALID_NAFDAC:
+            return True
+
+    except Exception:
+        pass
+
+    # fallback regex validation
+    pattern = re.compile(r"^[A-Z0-9]{2,}[-/][A-Z0-9]+$")
+
+    return bool(pattern.match(normalized))
+
+
+# =========================================================
+# RESPONSE MODEL
+# =========================================================
+
+class RiskResult(BaseModel):
+    score: int
+    level: str
+    flags: List[str]
+    verdict: str
+
+
+# =========================================================
+# CORE SCORING ENGINE
+# =========================================================
+
+def calculate_trust_score(
+    product: Dict,
+    vendor: Dict
+) -> RiskResult:
+
+    score = 100
+    flags: List[str] = []
+
+    # =====================================================
+    # 1. NAFDAC VALIDATION
+    # =====================================================
+
+    nafdac_no = str(product.get("nafdac_no", "") or "")
+
+    if not is_valid_nafdac(nafdac_no):
+        score -= 35
+        flags.append(
+            "Invalid or unverified NAFDAC registration"
+        )
+
+    # =====================================================
+    # 2. PRICE ANALYSIS
+    # =====================================================
+
+    market_avg = float(
+        product.get(
+            "market_avg",
+            settings.MARKET_AVG
+        ) or 0
+    )
+
+    price = float(
+        product.get("price", 0.0) or 0.0
+    )
+
+    if market_avg > 0:
+
+        if price < (market_avg * 0.6):
+            score -= 20
+            flags.append(
+                "Price significantly below market average"
+            )
+
+        elif price > (market_avg * 1.8):
+            score -= 10
+            flags.append(
+                "Price unusually high"
+            )
+
+    # =====================================================
+    # 3. EXPIRY ANALYSIS
+    # =====================================================
+
+    if product.get("expiry_status") == "expired":
+        score -= 40
+        flags.append(
+            "Product is past expiration date"
+        )
+
+    # =====================================================
+    # 4. VENDOR ANALYSIS
+    # =====================================================
+
+    if vendor.get("years_in_business", 0) < 1:
+        score -= 15
+        flags.append(
+            "Vendor has less than 1 year of verified history"
+        )
+
+    if vendor.get("complaint_count", 0) > 2:
+        score -= 25
+        flags.append(
+            "Multiple unresolved complaints detected"
+        )
+
+    if not vendor.get("is_cac_registered"):
+        score -= 20
+        flags.append(
+            "Vendor not found in CAC registry"
+        )
+
+    # =====================================================
+    # 5. OCR LABEL VALIDATION
+    # =====================================================
+
+    ocr_text = str(
+        product.get("ocr_text", "")
+    ).lower()
+
+    product_name = str(
+        product.get("product_name", "")
+    ).lower()
+
+    if ocr_text and product_name:
+
+        if product_name not in ocr_text:
+            score -= 10
+            flags.append(
+                "OCR label mismatch detected"
+            )
+
+    # =====================================================
+    # FINAL SCORE NORMALIZATION
+    # =====================================================
+
+    score = max(0, min(score, 100))
+
+    # =====================================================
+    # RISK CLASSIFICATION
+    # =====================================================
+
+    if score >= 80:
+        level = "LOW"
+        verdict = "Likely Genuine"
+
+    elif score >= 60:
+        level = "MEDIUM"
+        verdict = "Proceed with Caution"
+
+    else:
+        level = "HIGH"
+        verdict = "High Risk / Possible Fraud"
+
+    # =====================================================
+    # RETURN RESULT
+    # =====================================================
+
+    return RiskResult(
+        score=score,
+        level=level,
+        flags=flags,
+        verdict=verdict,
+    )
+
+
+####################################################################################################
+FILE: core\__init__.py
+####################################################################################################
+
+from .config import settings
+from .scoring import calculate_trust_score
+
+__all__ = ["settings", "calculate_trust_score"]
+
+
+####################################################################################################
+FILE: services\ocr.py
+####################################################################################################
+
+import pytesseract
+from PIL import Image, ImageFilter, ImageOps
+
+
+def extract_label_text(image_path: str) -> str:
+    """
+    Perform OCR on the given image with simple preprocessing.
+    Returns uppercase text.
+    """
+    try:
+        img = Image.open(image_path)
+        img = ImageOps.exif_transpose(img)
+        img = img.convert("L")
+        img = img.filter(ImageFilter.SHARPEN)
+
+        text = pytesseract.image_to_string(img, config="--psm 6")
+        return text.upper().strip()
+    except Exception as e:
+        print(f"OCR error: {e}")
+        return ""
+
+
+####################################################################################################
+FILE: services\__init__.py
+####################################################################################################
+
+from .ocr import extract_label_text
+
+__all__ = ["extract_label_text"]
+
